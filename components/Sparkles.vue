@@ -1,8 +1,8 @@
 <template>
     <div class="sparkles">
-        <sparkle-dot v-for="i in 50" :key="i" />
-        <sparkle-dot v-for="j in 50" :min="66" :key="'j' + j" />
-        <sparkle-dot v-for="k in 50" :min="33" :key="'k' + k" />
+        <!-- <sparkle-dot v-for="i in 50" :key="i" /> -->
+        <!-- <sparkle-dot v-for="j in 50" :min="66" :key="'j' + j" /> -->
+        <!-- <sparkle-dot v-for="k in 50" :min="33" :key="'k' + k" /> -->
 
         <!-- <sparkle-dot v-for="i in 100" :key="'l' + i" class="d-none d-lg-block" />
         <sparkle-dot v-for="j in 100" :min="66" :key="'m' + j" class="d-none d-lg-block" />

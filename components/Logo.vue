@@ -23,14 +23,25 @@
 
     &:hover {
         .flash {
-            transform: rotate(360deg) scaleX(-1);
+            animation: flip 0.5s cubic-bezier(0.2, 0, 0.2, 1) forwards;
         }
     }
 
     .flash {
         transform-origin: center;
         transform-box: fill-box;
-        transition: transform 0.15s cubic-bezier(0.2, 0, 0.2, 1);
+    }
+}
+
+@keyframes flip {
+    0% {
+        transform: scaleX(1);
+    }
+    50% {
+        transform: scaleX(-1);
+    }
+    100% {
+        transform: scaleX(1);
     }
 }
 </style>

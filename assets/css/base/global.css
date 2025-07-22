@@ -1,6 +1,6 @@
 html {
     font-family: "Outfit", sans-serif;
-    font-weight: 400;
+    font-weight: 500;
 }
 
 main {
@@ -17,9 +17,15 @@ main {
 input[type="text"],
 input[type="email"],
 input[type="password"] {
+    outline: none;
     border-radius: 1rem;
     background-color: #fff9f4;
     padding: 0 1.25rem;
     height: 3.5625rem;
     width: 100%;
+
+    &::placeholder {
+        color: var(--color-body);
+        opacity: 0.5;
+    }
 }

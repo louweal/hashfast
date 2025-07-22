@@ -13,6 +13,7 @@ export default defineNuxtConfig({
         public: {
             hederaNetwork: process.env.HEDERA_NETWORK || "testnet",
         },
+        jwtSecret: process.env.JWT_SECRET,
     },
     app: {
         head: {

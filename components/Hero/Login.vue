@@ -27,13 +27,13 @@
                 </div>
                 <div class="md:col-span-5">
                     <div class="animate-slide-up bg-white p-8 rounded-3xl">
-                        <div class="flex flex-col gap-4" v-if="showCreateForm">
+                        <div class="flex flex-col gap-4">
                             <h2 class="text-[2rem] text-body">Register now</h2>
-                            <form @submit.prevent="createUser" class="space-y-4">
+                            <form @submit.prevent="handleLogin" class="space-y-4">
                                 <div class="flex flex-col gap-2">
                                     <label for="email" class="block text-body">Email</label>
                                     <input
-                                        v-model="newUser.email"
+                                        v-model="email"
                                         type="email"
                                         id="email"
                                         required
@@ -44,34 +44,19 @@
                                 <div class="flex flex-col gap-2">
                                     <label for="password" class="block text-body">Password</label>
                                     <input
-                                        v-model="newUser.password"
+                                        v-model="password"
                                         type="password"
                                         id="password"
                                         class="input-field"
                                         placeholder="Password"
                                         required
                                     />
-                                    <input
-                                        v-model="newUser.password2"
-                                        type="password"
-                                        id="password2"
-                                        class="input-field"
-                                        placeholder="Confirm password"
-                                        required
-                                    />
                                 </div>
-                                <div v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</div>
                                 <div class="flex gap-4">
-                                    <button type="submit" :disabled="creating" class="btn">
-                                        {{ creating ? "Processing..." : "Register" }}
-                                    </button>
+                                    <button type="submit" class="btn">Log in</button>
                                 </div>
+                                <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
                             </form>
-                        </div>
-                        <div v-else class="flex flex-col gap-4">
-                            <h2 class="text-[2rem] text-body">Registration successful!</h2>
-                            <p class="text-body">You can now log in with your email and password.</p>
-                            <NuxtLink to="/login" class="btn self-start">Login</NuxtLink>
                         </div>
                     </div>
                 </div>
@@ -81,39 +66,15 @@
 </template>
 
 <script setup>
-const showCreateForm = ref(true);
-const creating = ref(false);
-const newUser = ref({
-    email: "",
-    password: "",
-    password2: "",
-});
+import { ref } from "vue";
+const email = ref("");
+const password = ref("");
+const { login, pending, error } = useAuth();
 
-let error = ref(null);
-
-const createUser = async () => {
-    creating.value = true;
-    try {
-        // check password and password2 match
-        if (newUser.value.password !== newUser.value.password2) {
-            error.value = "Passwords do not match";
-
-            throw new Error("Passwords do not match");
-        }
-
-        await $fetch("/api/users", {
-            method: "POST",
-            body: newUser.value,
-        });
-
-        // Reset form and refresh data
-        newUser.value = { email: "", password: "", password2: "" };
-        showCreateForm.value = false;
-        // await refresh();
-    } catch (error) {
-        console.error("Failed to create user:", error);
-    } finally {
-        creating.value = false;
+async function handleLogin() {
+    await login(email.value, password.value);
+    if (!error.value) {
+        navigateTo("/dashboard");
     }
-};
+}
 </script>
