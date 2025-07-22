@@ -1,0 +1,26 @@
+:root {
+    /* Colors */
+    --color-light: #ffffff;
+    --color-dark: #000000;
+    --color-background: #f1f1f1;
+    --color-heading: #000000;
+    --color-body: #7a7475;
+    --color-primary: #fbda48;
+    --color-secondary: #0e4153;
+    --color-accent: #e4a11b;
+
+    /* Gradients */
+    --gradient-primary: radial-gradient(345.76% 130.18% at 98.72% 0%, #d2ca4e 0.18%, #44a071 45.45%, #138462 86.74%);
+
+    /* Sizes */
+    --container-width: 75rem;
+    --header-height: 6.5rem;
+
+    @media (--lg) {
+        --header-height: 4.5rem;
+
+        @media (--lg) {
+            --header-height: 36.5rem;
+        }
+    }
+}

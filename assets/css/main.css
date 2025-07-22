@@ -1,0 +1,13 @@
+/* Base */
+@import "./base/variables";
+@import "./base/tailwind";
+@import "./base/global";
+
+/* Components */
+@import "./components/btn";
+
+.hero {
+    width: 100%;
+    /* height: 100vh; */
+    padding-top: calc(var(--header-height) + 2rem);
+}

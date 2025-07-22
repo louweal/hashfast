@@ -1,0 +1,27 @@
+{
+    "name": "nuxt-fullstack-app",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "nuxt build",
+        "dev": "HOST=0.0.0.0 nuxt dev",
+        "generate": "nuxt generate",
+        "preview": "nuxt preview",
+        "postinstall": "nuxt prepare && prisma generate",
+        "db:migrate": "prisma migrate dev",
+        "db:deploy": "prisma migrate deploy",
+        "db:studio": "prisma studio",
+        "db:seed": "tsx prisma/seed.ts"
+    },
+    "dependencies": {
+        "@hashgraph/sdk": "^2.67.0",
+        "@nuxtjs/tailwindcss": "^7.0.0-beta.0",
+        "@prisma/client": "^5.19.1",
+        "nuxt": "^3.13.0"
+    },
+    "devDependencies": {
+        "postcss-nested": "^7.0.2",
+        "prisma": "^5.19.1",
+        "tsx": "^4.19.1"
+    }
+}

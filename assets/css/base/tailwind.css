@@ -1,0 +1,30 @@
+@import "tailwindcss";
+
+@theme {
+    --breakpoint-xs: 30rem;
+    --breakpoint-2xl: 96rem;
+    --breakpoint-3xl: 120rem;
+
+    /* Colors */
+    --color-body: "#7A7475";
+
+    /* Animations */
+    --animate-slide-up: "slideUp 0.3s ease-out";
+}
+
+@utility container {
+    padding: 0 1rem;
+    max-width: var(--container-width);
+    margin: 0 auto;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(10px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}

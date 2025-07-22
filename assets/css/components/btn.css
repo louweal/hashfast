@@ -1,0 +1,30 @@
+.btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 3.5625rem;
+    border-radius: 50em;
+    color: var(--color-light);
+    background-color: var(--color-primary);
+    padding: 0 1.75rem;
+    color: #816a37;
+    font-size: 1.25rem;
+    font-weight: 400;
+    transition: box-shadow 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+
+    &:hover {
+        cursor: pointer;
+        box-shadow: 3px 3px 10px 0 rgb(0 0 0 / 0.25);
+    }
+
+    &--dark {
+        background-color: var(--color-dark);
+        color: var(--color-light);
+    }
+
+    &--small {
+        height: 2.5rem;
+        font-size: 1rem;
+        padding: 0 1.25rem;
+    }
+}
