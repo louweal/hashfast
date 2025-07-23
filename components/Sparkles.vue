@@ -26,6 +26,5 @@ export default {};
     z-index: -1;
     background: var(--gradient-primary);
     overflow: hidden;
-    /* background: linear-gradient(180deg, rgba(#191970, 1) 0%, rgba(#080830, 1) 100%); */
 }
 </style>

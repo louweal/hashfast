@@ -3,6 +3,8 @@
         <Header />
 
         <Hero-Home />
+
+        <Footer />
     </main>
 </template>
 

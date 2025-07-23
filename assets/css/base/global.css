@@ -25,11 +25,30 @@ input[type="password"] {
     border-radius: 1rem;
     background-color: var(--color-background);
     padding: 0 1.25rem;
-    height: 3.5625rem;
+    height: 3.375rem;
     width: 100%;
 
     &::placeholder {
         color: var(--color-body);
         opacity: 0.5;
+    }
+}
+
+.hidden-grid-panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+
+    > * {
+        opacity: 0;
+        transition: opacity 0.2s 0.1s linear;
+    }
+
+    &.is-active {
+        grid-template-rows: 1fr;
+
+        > * {
+            opacity: 1;
+        }
     }
 }

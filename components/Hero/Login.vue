@@ -74,7 +74,7 @@ const { login, pending, error } = useAuth();
 async function handleLogin() {
     await login(email.value, password.value);
     if (!error.value) {
-        navigateTo("/dashboard");
+        navigateTo("/dashboard/links");
     }
 }
 </script>

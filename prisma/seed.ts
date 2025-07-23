@@ -14,30 +14,51 @@ async function main() {
     //   authorId         String
 
     // create a dummy link
-    const link1 = await prisma.link.create({
-        data: {
-            description: "Two scoops of ice cream",
-            accountId: "0.0.123456",
-            amount: "4", // decimal
-            currency: "USDC",
-            authorId: userId,
-        },
-    });
+    // const link1 = await prisma.link.create({
+    //     data: {
+    //         description: "Two scoops of ice cream",
+    //         accountId: "0.0.123456",
+    //         amount: "4", // decimal
+    //         currency: "USDC",
+    //         authorId: userId,
+    //     },
+    // });
 
-    const link2 = await prisma.link.create({
+    // const link2 = await prisma.link.create({
+    //     data: {
+    //         description: "Pay this week!",
+    //         accountId: "0.0.123456",
+    //         amount: "100",
+    //         currency: "HBAR",
+    //         maxPayments: 20,
+    //         expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+    //         authorId: userId,
+    //     },
+    // });
+
+    let link3 = await prisma.link.create({
         data: {
-            description: "Pay this week!",
+            description: "Pay last week!",
             accountId: "0.0.123456",
-            amount: "100",
+            amount: "3",
             currency: "HBAR",
             maxPayments: 20,
-            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+            expires: new Date(Date.now() - 1000 * 60 * 60 * 24 * 7),
             authorId: userId,
         },
     });
 
+    // let link1id = "cmcq0pkit00014lqu7rgkhmv6";
+
+    // const payment1 = await prisma.payment.create({
+    //     data: {
+    //         transactionId: "0.0.4505361@1751874971.890462037",
+    //         linkId: link1id,
+    //     },
+    // });
+
     console.log("Database seeded successfully!");
-    console.log({ link1, link2 });
+    // console.log({ payment1 });
 }
 
 main()
