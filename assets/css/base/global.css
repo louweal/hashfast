@@ -1,6 +1,10 @@
 html {
     font-family: "Outfit", sans-serif;
-    font-weight: 500;
+    font-weight: 500; /* medium */
+}
+
+body {
+    background-color: var(--color-background);
 }
 
 main {
@@ -19,7 +23,7 @@ input[type="email"],
 input[type="password"] {
     outline: none;
     border-radius: 1rem;
-    background-color: #fff9f4;
+    background-color: var(--color-background);
     padding: 0 1.25rem;
     height: 3.5625rem;
     width: 100%;

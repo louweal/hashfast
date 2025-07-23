@@ -37,7 +37,7 @@
                                         type="email"
                                         id="email"
                                         required
-                                        class="input-field"
+                                        class=""
                                         placeholder="user@example.com"
                                     />
                                 </div>
@@ -47,7 +47,7 @@
                                         v-model="password"
                                         type="password"
                                         id="password"
-                                        class="input-field"
+                                        class=""
                                         placeholder="Password"
                                         required
                                     />

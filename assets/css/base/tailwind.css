@@ -7,9 +7,13 @@
 
     /* Colors */
     --color-body: "#7A7475";
+    --color-secondary-50: rgba(218, 237, 214, 0.5);
 
     /* Animations */
     --animate-slide-up: "slideUp 0.3s ease-out";
+
+    /* Shadows */
+    --shadow-sm: 2px 2px 3px rgba(0, 0, 0, 0.03);
 }
 
 @utility container {

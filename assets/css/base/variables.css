@@ -2,11 +2,11 @@
     /* Colors */
     --color-light: #ffffff;
     --color-dark: #000000;
-    --color-background: #f1f1f1;
+    --color-background: #fff9f4;
     --color-heading: #000000;
     --color-body: #7a7475;
     --color-primary: #fbda48;
-    --color-secondary: #0e4153;
+    --color-secondary: #daedd6;
     --color-accent: #e4a11b;
 
     /* Gradients */
@@ -14,13 +14,9 @@
 
     /* Sizes */
     --container-width: 75rem;
-    --header-height: 6.5rem;
+    --header-height: 4rem;
 
-    @media (--lg) {
-        --header-height: 4.5rem;
-
-        @media (--lg) {
-            --header-height: 36.5rem;
-        }
+    @media (min-width: 64rem) {
+        /* --header-height: 6.5rem; */
     }
 }

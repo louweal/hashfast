@@ -19,8 +19,10 @@ model User {
 model Link {
   id               String   @id @default(cuid())
   description      String
+  image            String?
   accountId        String
   amount           Decimal @db.Decimal(15,2)
+  currency         String
   memo             String?
   expires          DateTime?
   maxPayments      Int?
@@ -28,4 +30,12 @@ model Link {
   author           User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
+  payments         Payment[]
+}
+
+model Payment {
+  transactionId   String @id
+  linkId          String
+  link            Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  @@index([linkId])           // (optional) speeds up queries by link
 }
