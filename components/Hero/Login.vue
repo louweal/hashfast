@@ -4,16 +4,8 @@
         <div class="container z-[2]">
             <div class="grid md:grid-cols-12 gap-5 items-center">
                 <div class="md:col-span-5 md:col-start-2 flex flex-col gap-4 text-white">
-                    <NuxtLink to="/" class="flex gap-[10px] items-center text-[18px]"
-                        ><svg width="18" height="14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path
-                                d="M17 7H1m0 0 6-6M1 7l6 6"
-                                stroke="#fff"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
+                    <NuxtLink to="/" class="flex gap-[10px] items-center text-[18px]">
+                        <IconArrowLeft />
                         Back
                     </NuxtLink>
 

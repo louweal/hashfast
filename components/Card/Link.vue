@@ -11,24 +11,9 @@
                         }"
                     ></div>
                     <div class="card-link__circle__inner">
-                        <img v-if="image" className="" :src="logo" width="60" height="60" />
+                        <img v-if="image" className="" :src="image" width="60" height="60" />
                         <div v-else>
-                            <svg width="23" height="28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M5.6 0h11.2l-5.6 11.2h11.2L5.6 28l5.6-11.2H0L5.6 0Z" fill="url(#a)" />
-                                <defs>
-                                    <linearGradient
-                                        id="a"
-                                        x1="0"
-                                        y1="22"
-                                        x2="22"
-                                        y2="5.5"
-                                        gradientUnits="userSpaceOnUse"
-                                    >
-                                        <stop stop-color="#138462" />
-                                        <stop offset="1" stop-color="#44A071" />
-                                    </linearGradient>
-                                </defs>
-                            </svg>
+                            <IconFlash />
                         </div>
                     </div>
                 </div>
@@ -81,7 +66,7 @@
                         </div>
                         <div class="col-span-4 md:col-span-2 flex flex-start">
                             <div
-                                class="rounded-md px-3 py-2"
+                                class="rounded-md px-3 py-1 md:py-2"
                                 :style="`background-color: hsl(${colorHash('0.0.1784003')}, 65%, 92%)`"
                             >
                                 0.0.1784003
@@ -99,9 +84,11 @@
                 </div>
 
                 <div class="flex gap-5 p-5">
-                    <div class="flex flex-grow">Share: <NuxtLink :to="`/link/${id}`">(link)</NuxtLink> (QR)</div>
+                    <div class="flex flex-grow">
+                        Share: <NuxtLink :to="`/link/${id}`" target="_blank">(link)</NuxtLink> (QR)
+                    </div>
                     <div class="flex">
-                        <div class="cursor-pointer"><TrashIcon /></div>
+                        <div class="cursor-pointer"><IconTrash /></div>
                     </div>
                 </div>
             </div>
@@ -111,7 +98,7 @@
 
 <script setup>
 import { HederaService } from "~/lib/hedera";
-import TrashIcon from "../Icon/TrashIcon.vue";
+import IconTrash from "../Icon/Trash.vue";
 const hederaService = new HederaService();
 
 const props = defineProps({

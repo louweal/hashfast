@@ -1,5 +1,5 @@
 <template>
-    <div class="header fixed top-0 left-0 right-0 z-50 py-3">
+    <div class="header fixed top-0 left-0 right-0 z-50 py-3" :class="{ 'header--gradient': gradient }">
         <div class="container flex justify-between items-center">
             <Logo />
 
@@ -25,10 +25,21 @@
 
 <script setup>
 let user = { id: "cmcq08j7h0000dp4ofgfpwg4n" }; // to do
+
+const props = defineProps({
+    gradient: {
+        type: Boolean,
+        default: false,
+    },
+});
 </script>
 
 <style scoped>
 .header {
     height: var(--header-height);
+
+    &--gradient {
+        background: var(--gradient-primary);
+    }
 }
 </style>
