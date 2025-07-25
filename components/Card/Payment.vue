@@ -1,6 +1,8 @@
 <template>
     <a
-        href="https://hashscan.io/testnet/transaction/0.0.12345678"
+        :href="`https://hashscan.io/${hederaService.network}/transaction/${hederaService.parseTransactionId(
+            transactionId,
+        )}`"
         target="_blank"
         class="grid grid-cols-12 gap-5 items-center bg-background/70 p-5 border-b border-body/15"
     >

@@ -18,7 +18,7 @@ const emit = defineEmits(["change"]);
 const canvasRef = ref(null);
 
 const generateQRCode = async () => {
-    if (canvasRef.value) {
+    if (canvasRef.value && props.value) {
         try {
             await QRCode.toCanvas(canvasRef.value, props.value, { errorCorrectionLevel: "L", width: 256 });
             const dataUrl = canvasRef.value.toDataURL();

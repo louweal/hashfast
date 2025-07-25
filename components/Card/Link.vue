@@ -51,7 +51,7 @@
         </div>
         <div class="hidden-grid-panel" :class="{ 'is-active': showPanel }" ref="panel">
             <div class="overflow-hidden border-t border-body/15">
-                <div class="max-h-[205px] overflow-y-scroll no-scrollbar relative border-b border-body/15">
+                <div class="max-h-[205px] overflow-y-scroll no-scrollbar relative">
                     <CardPayment
                         v-for="(payment, index) in payments"
                         :key="payment.transactionId"

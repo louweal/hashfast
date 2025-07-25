@@ -43,7 +43,11 @@
                     </div>
                 </div>
             </div>
-            <p class="opacity-50 text-center flex gap-2 items-center" @click="copyLink">Copy link <IconCopy /></p>
+            <div class="text-center flex gap-2 items-center relative" @click="copyLink">
+                <p class="flex gap-2 items-center opacity-50 cursor-pointer">
+                    {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
+                </p>
+            </div>
         </div>
     </main>
 </template>
@@ -63,6 +67,7 @@ onMounted(() => {
 });
 
 const paymentUrl = ref(null);
+const copied = ref(false);
 
 const onUrlChange = (newUrl) => {
     paymentUrl.value = newUrl;
@@ -76,8 +81,13 @@ const { data: link, error } = await useAsyncData("link", () => $fetch(`/api/link
 
 const copyLink = async () => {
     try {
-        await navigator.clipboard.writeText(paymentUrl);
-        // setTimeout(() => (copied.value = false), 2000); // hide "Copied!" after 2 sec
+        console.log(window.location.href);
+        await navigator.clipboard.writeText(window.location.href);
+        copied.value = true;
+
+        setTimeout(() => {
+            copied.value = false;
+        }, 5000);
     } catch (err) {
         console.error("Failed to copy:", err);
     }

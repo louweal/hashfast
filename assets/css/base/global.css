@@ -19,8 +19,11 @@ main {
 }
 
 input[type="text"],
+input[type="date"],
+input[type="number"],
 input[type="email"],
-input[type="password"] {
+input[type="password"],
+select {
     outline: none;
     border-radius: 1rem;
     background-color: var(--color-background);
