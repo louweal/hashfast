@@ -85,7 +85,8 @@
 
                 <div class="flex gap-5 p-5">
                     <div class="flex flex-grow">
-                        Share: <NuxtLink :to="`/link/${id}`" target="_blank">(link)</NuxtLink> (QR)
+                        Share: <NuxtLink :to="`/link/${id}`" target="_blank">(link)</NuxtLink>
+                        <NuxtLink :to="`/link/${id}?qr=true`" target="_blank">(QR)</NuxtLink>
                     </div>
                     <div class="flex">
                         <div class="cursor-pointer"><IconTrash /></div>
