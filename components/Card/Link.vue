@@ -1,6 +1,6 @@
 <template>
     <div class="card-link bg-white rounded-2xl shadow-sm hover:bg-background border border-body/10 transition-colors">
-        <div class="grid md:grid-cols-12 gap-5 items-center flex-start relative p-5">
+        <div class="grid md:grid-cols-12 gap-5 items-center flex-start relative p-5" @click="togglePanel">
             <div class="md:col-span-7 lg:col-span-5 flex items-center gap-4">
                 <div class="card-link__circle">
                     <div
@@ -42,42 +42,22 @@
                     expired
                 </div>
                 <div class="bg-accent/20 text-accent rounded-sm px-3 py-1 md:py-2 whitespace-nowrap" v-else>
-                    + {{ totalPayments }} {{ currency }}
+                    + {{ totalAmount }} {{ currency }}
                 </div>
             </div>
             <div class="md:col-span-1 flex justify-end">
                 <IconChevronDown />
             </div>
         </div>
-        <div class="xxxhidden-grid-panel">
+        <div class="hidden-grid-panel" :class="{ 'is-active': showPanel }" ref="panel">
             <div class="overflow-hidden border-t border-body/15">
                 <div class="max-h-[205px] overflow-y-scroll no-scrollbar relative border-b border-body/15">
-                    <a
-                        href="https://hashscan.io/testnet/transaction/0.0.12345678"
-                        target="_blank"
+                    <CardPayment
                         v-for="(payment, index) in payments"
-                        :key="payment.id"
-                        class="grid grid-cols-12 gap-5 items-center bg-background/70 p-5 border-b border-body/15"
-                        :class="{ 'border-b-0': index == payments.length - 1 }"
-                    >
-                        <div class="md:col-span-6 hidden md:block">{{ memo }}</div>
-                        <div class="col-span-4 md:col-span-2">
-                            7/7/2023 <span class="hidden md:inline">12:33:33</span>
-                        </div>
-                        <div class="col-span-4 md:col-span-2 flex flex-start">
-                            <div
-                                class="rounded-md px-3 py-1 md:py-2"
-                                :style="`background-color: hsl(${colorHash('0.0.1784003')}, 65%, 92%)`"
-                            >
-                                0.0.1784003
-                            </div>
-                        </div>
-                        <div class="col-span-4 md:col-span-2 flex flex-start">
-                            <div class="bg-accent/20 text-accent rounded-sm px-3 py-1 md:py-2 whitespace-nowrap">
-                                + 99 HBAR
-                            </div>
-                        </div>
-                    </a>
+                        :key="payment.transactionId"
+                        :="payment"
+                        :accountId="accountId"
+                    />
                     <!-- <div class="absolute bottom-4 left-0 right-0 flex justify-center" v-if="payments.length > 2">
                         <div class="animate-bounce"><IconChevronDown /></div>
                     </div> -->
@@ -100,6 +80,8 @@
 <script setup>
 import { HederaService } from "~/lib/hedera";
 import IconTrash from "../Icon/Trash.vue";
+import { useTemplateRef, onMounted } from "vue";
+
 const hederaService = new HederaService();
 
 const props = defineProps({
@@ -146,7 +128,7 @@ const props = defineProps({
     },
 });
 
-const colorHash = (s) => [...s].reduce((h, c) => h + c.charCodeAt(0), 0) % 360; //  <‑‑ ONE‑LINER
+const colorHash = (s) => [...s].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
 
 let progress;
 
@@ -157,8 +139,18 @@ if (props.maxPayments && props.payments) {
     progress = 100;
 }
 
+// console.log(props.payments);
+
 let state = "";
 let totalPayments = 0;
+
+// let mirrorNodeData = await hederaService.getAllTransactionData(payment.transactionId, payment.accountId);
+
+// let memo = ref(mirrorNodeData.transactions[0]["memo_base64"]);
+
+// map all payment transactionIds
+let paymentIds = props.payments.map((payment) => payment.transactionId);
+let totalAmount = await hederaService.getTotalTransactionAmount(paymentIds, props.accountId);
 
 if (props.payments && props.payments.length > 0) {
     if (props.currency == "HBAR") {
@@ -178,6 +170,12 @@ if (props.expires) {
     if (new Date(props.expires) < new Date()) {
         state = "expired";
     }
+}
+
+const showPanel = ref(false);
+
+function togglePanel() {
+    showPanel.value = !showPanel.value;
 }
 </script>
 

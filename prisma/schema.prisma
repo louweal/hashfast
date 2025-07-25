@@ -18,11 +18,11 @@ model User {
 
 model Link {
   id               String   @id @default(cuid())
-  name             String @default("")
+  name             String? @default("")
   image            String?
-  accountId        String
-  amount           Decimal @db.Decimal(15,2)
-  currency         String
+  accountId        String?
+  amount           Decimal? @db.Decimal(15,2)
+  currency         String?
   memo             String?
   expires          DateTime?
   maxPayments      Int?

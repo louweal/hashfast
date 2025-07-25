@@ -16,14 +16,14 @@ export default {};
 
 <style scoped>
 .sparkles {
-    position: relative;
+    position: absolute;
     width: 100%;
     height: 100%;
-    /* top: 0;
+    top: 0;
     left: 0;
     bottom: 0;
-    right: 0; */
-    /* z-index: 0; */
+    right: 0;
+    z-index: -1;
     background: var(--gradient-primary);
     overflow: hidden;
 }

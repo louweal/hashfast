@@ -10,6 +10,7 @@ interface Transfer {
 interface TransactionRecord {
     result: string;
     transfers: Transfer[];
+    memo: number;
 }
 
 interface MirrorNodeResponse {
@@ -48,7 +49,7 @@ export class HederaService {
         return `${accountId}-${timestamp}`;
     }
 
-    async getTransactionAmount(transactionId: string, receiverId: string): Promise<number> {
+    async getAllTransactionData(transactionId: string): Promise<any> {
         let txId = this.parseTransactionId(transactionId);
         const url = `${this.networkUrl}/api/v1/transactions/${txId}`;
         const res = await fetch(url);
@@ -57,15 +58,32 @@ export class HederaService {
         }
 
         const data: MirrorNodeResponse = await res.json();
-        const tx = data.transactions.find((t) => t.result === "SUCCESS") ?? data.transactions[0];
+        console.log(data.transactions[0]);
+        return data.transactions[0];
+    }
 
-        if (!tx || !tx.transfers) {
-            throw new Error("Transaction not found or has no transfer data");
+    async getTransactionAmount(transactionId: string, receiverId: string): Promise<number> {
+        let paymentData = await this.getAllTransactionData(transactionId);
+        let transfers = paymentData["transfers"];
+
+        let amount = 0;
+        for (let i = 0; i < transfers.length; i++) {
+            if (transfers[i]["account"] == receiverId) {
+                amount = Number(transfers[i]["amount"]) / 100_000_000;
+                break;
+            }
         }
 
-        // Sum up positive amounts (credits), excluding network fee (account 0.0.98)
-        const totalTinybar = tx.transfers.filter((t) => t.account === receiverId).reduce((sum, t) => sum + t.amount, 0);
+        return amount;
+    }
 
-        return totalTinybar / 100_000_000; // Convert tinybar → HBAR
+    async getTotalTransactionAmount(paymentIds: string[], receiverId: string): Promise<number> {
+        let amount = 0;
+
+        for (let i = 0; i < paymentIds.length; i++) {
+            amount += await this.getTransactionAmount(paymentIds[i], receiverId);
+        }
+
+        return amount;
     }
 }
