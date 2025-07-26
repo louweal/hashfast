@@ -1,7 +1,7 @@
 <template>
     <main>
         <Header />
-        <HeroDashboard />
+        <!-- <Hero-Dashboard /> -->
 
         subscriptions
     </main>

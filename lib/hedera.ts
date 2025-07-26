@@ -1,4 +1,5 @@
 import { Client, AccountId, PrivateKey, Hbar, TransferTransaction, AccountBalanceQuery } from "@hashgraph/sdk";
+import type { Link } from "@prisma/client";
 
 type Network = "mainnet" | "testnet" | "previewnet";
 
@@ -85,5 +86,30 @@ export class HederaService {
         }
 
         return amount;
+    }
+
+    async sendPayment(link: Link) {
+        if (!link.accountId) {
+            throw new Error("Link does not have an accountId");
+        }
+        if (!link.amount) {
+            throw new Error("Link does not have an amount");
+        }
+        if (!link.currency) {
+            throw new Error("Link does not have a currency");
+        }
+
+        const toAccount = AccountId.fromString(link.accountId);
+
+        if (link.currency == "hbar") {
+            const tinybarAmount = Number(link.amount) * 100_000_000;
+
+            console.log("to do hbar transfer");
+            return;
+        }
+
+        if (link.currency == "usdc") {
+            console.log("to do usdc transfer");
+        }
     }
 }

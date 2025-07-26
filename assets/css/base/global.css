@@ -35,6 +35,12 @@ select {
         color: var(--color-body);
         opacity: 0.5;
     }
+
+    &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        background-color: #f7f7f7;
+    }
 }
 
 .hidden-grid-panel {
@@ -82,11 +88,14 @@ select {
         justify-content: center;
         align-items: center;
         background: var(--color-secondary);
-        cursor: pointer;
-        transition: filter 0.3s cubic-bezier(0.2, 0, 0.2, 1);
 
-        &:hover {
-            filter: brightness(0.93);
+        &--interactive {
+            cursor: pointer;
+            transition: filter 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+
+            &:hover {
+                filter: brightness(0.93);
+            }
         }
     }
 }

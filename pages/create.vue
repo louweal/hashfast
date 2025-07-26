@@ -6,7 +6,7 @@
                 @submit.prevent="createLink"
                 class="block bg-white border border-body/10 rounded-2xl relative min-w-full sm:min-w-md sm:w-md pt-16"
             >
-                <div class="card__header" @click="triggerFileInput">
+                <div class="card__header card__header--interactive" @click="triggerFileInput">
                     <div>
                         <img v-if="imageFile" class="" :src="imageUrl" width="50" height="50" title="Upload icon" />
                         <div v-else>
@@ -21,6 +21,7 @@
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                         <input type="number" v-model="newLink.amount" placeholder="Amount" class="sm:col-span-2" />
                         <select v-model="newLink.currency" class="">
+                            <option value="*">---</option>
                             <option value="hbar">HBAR</option>
                             <option value="usdc">USDC</option>
                         </select>
@@ -35,6 +36,7 @@
                                 width="12"
                                 height="12"
                                 xmlns="http://www.w3.org/2000/svg"
+                                class="transform transition-transform"
                                 :class="{ 'rotate-180': showOptionalFields }"
                             >
                                 <path

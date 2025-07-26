@@ -12,8 +12,31 @@
                     <QrCode :value="url" @change="onUrlChange" />
                 </div>
                 <div class="p-5 flex flex-col gap-4">
-                    <h3 class="font-bold text-xl">To pay: {{ link.amount }} {{ link.currency }}</h3>
-                    <div>
+                    <h3 class="font-bold text-xl" v-if="baseLink.amount && baseLink.currency">
+                        To pay: {{ link.amount }} {{ link.currency }}
+                    </h3>
+                    <div v-else-if="!qrUrl" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                        <input type="text" placeholder="Enter the amount" class="sm:col-span-2" v-model="link.amount" />
+
+                        <input
+                            v-if="baseLink.currency"
+                            type="text"
+                            v-model="link.currency"
+                            disabled
+                            class="uppercase"
+                        />
+                        <select v-else v-model="link.currency">
+                            <option value="hbar">HBAR</option>
+                            <option value="usdc">USDC</option>
+                        </select>
+                    </div>
+                    <div v-else>
+                        <p>
+                            Scan the QR code to pay with
+                            {{ currencies }}.
+                        </p>
+                    </div>
+                    <div v-if="link.name">
                         <h4>Description:</h4>
                         <p class="opacity-50">{{ link.name }}</p>
                     </div>
@@ -39,7 +62,12 @@
                                 </li>
                             </ul>
                         </div>
-                        <div v-if="!route.query.qr" class="btn gap-3">
+                        <div
+                            v-if="!route.query.qr"
+                            class="btn gap-3"
+                            :class="{ 'btn--disabled': !link.amount }"
+                            @click="link.amount ? handlePayment() : null"
+                        >
                             <IconHedera class="-ml-3" /> <span>Pay<span class="hidden md:inline"> now</span></span>
                         </div>
                     </div>
@@ -64,11 +92,14 @@
 </template>
 
 <script setup>
+import { HederaService } from "~/lib/hedera";
 import { IconHedera } from "#components";
 import { QrCode } from "#components";
 import { ref, onMounted } from "vue";
 const router = useRouter();
 const route = useRoute();
+
+const hederaService = new HederaService();
 
 // get current url
 let url = ref("");
@@ -87,8 +118,19 @@ const onUrlChange = (newUrl) => {
     paymentUrl.value = newUrl;
 };
 
-const { data: link, error } = await useAsyncData("link", () => $fetch(`/api/links/${route.params.slug}`));
-const { data: receiver } = await useAsyncData("receiver", () => $fetch(`/api/users/${link.value.authorId}`));
+const { data: baseLink, error } = await useAsyncData("baseLink", () => $fetch(`/api/links/${route.params.slug}`));
+const { data: receiver } = await useAsyncData("receiver", () => $fetch(`/api/users/${baseLink.value.authorId}`));
+
+const link = ref({
+    ...baseLink.value,
+});
+
+const currencies = link.currency ? link.currency.toUpperCase() : "HBAR or USDC";
+
+let pageTitle =
+    link.value.amount && link.value.currency
+        ? "Pay " + link.value.amount + " " + link.value.currency.toUpperCase() + " to " + receiver.value.name
+        : "Pay " + receiver.value.name;
 
 const copyLink = async () => {
     try {
@@ -103,27 +145,17 @@ const copyLink = async () => {
     }
 };
 
-watchEffect(() => {
-    if (link.value && receiver.value) {
-        useHead({
-            title: "Pay " + link.value.amount + " " + link.value.currency + " to " + receiver.value.name,
-            meta: [
-                {
-                    name: "description",
-                    content: "HashFast",
-                },
-            ],
-        });
-    } else {
-        useHead({
-            title: "HashFast",
-            meta: [
-                {
-                    name: "description",
-                    content: "HashFast",
-                },
-            ],
-        });
+const handlePayment = async () => {
+    try {
+        await hederaService.sendPayment(link.value);
+    } catch (err) {
+        console.error("Failed to send payment:", err);
     }
+};
+
+watchEffect(() => {
+    useHead({
+        title: pageTitle,
+    });
 });
 </script>

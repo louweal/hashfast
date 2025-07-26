@@ -53,7 +53,7 @@
                 </div>
             </div>
             <div class="md:col-span-1 flex justify-end">
-                <IconChevronDown />
+                <IconChevronDown :class="{ 'rotate-180': showPanel }" class="transform transition-transform" />
             </div>
         </div>
         <div class="hidden-grid-panel" :class="{ 'is-active': showPanel }" ref="panel">
@@ -71,7 +71,7 @@
                 </div>
 
                 <div class="flex gap-5 p-5">
-                    <div class="flex flex-grow items-center gap-2" v-if="name && amount && currency">
+                    <div class="flex flex-grow items-center gap-2">
                         Share:
                         <NuxtLink :to="`/link/view/${id}`" target="_blank" class="opacity-50 flex gap-1 items-center"
                             ><IconLink /> Link</NuxtLink
@@ -83,7 +83,7 @@
                             ><IconQR /> QR</NuxtLink
                         >
                     </div>
-                    <div v-else class="flex flex-grow">Create link</div>
+                    <!-- <div v-else class="flex flex-grow">Create link</div> -->
                     <div class="flex">
                         <div class="cursor-pointer" @click="handleDelete(id)"><IconTrash /></div>
                     </div>
