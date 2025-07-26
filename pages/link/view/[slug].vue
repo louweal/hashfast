@@ -1,9 +1,9 @@
 <template>
-    <main class="h-dvh flex justify-center item-center">
-        <div class="container flex flex-col justify-center items-center gap-4">
-            <div class="bg-white border border-body/10 rounded-2xl relative min-w-full sm:min-w-md pt-8">
+    <main class="min-h-dvh flex justify-center item-center">
+        <div class="container flex flex-col justify-center items-center gap-4 w-full sm:w-md">
+            <div class="bg-white border border-body/10 rounded-2xl relative pt-14 w-full">
                 <div class="card__header">
-                    <img v-if="image" className="" :src="image" width="60" height="60" />
+                    <img v-if="link.image" :src="link.image" width="60" height="60" />
                     <div v-else>
                         <IconFlash />
                     </div>
@@ -31,9 +31,11 @@
                     <div class="flex">
                         <div class="flex flex-grow">
                             <ul>
-                                <li>To: <span class="opacity-50">Name Surname</span></li>
                                 <li>
-                                    Wallet: <span class="opacity-50">{{ link.accountId }}</span>
+                                    To: <span class="opacity-50">{{ receiver.name }}</span>
+                                </li>
+                                <li>
+                                    Wallet: <span class="opacity-50">{{ receiver.wallet }}</span>
                                 </li>
                             </ul>
                         </div>
@@ -43,11 +45,20 @@
                     </div>
                 </div>
             </div>
-            <div class="text-center flex gap-2 items-center relative" @click="copyLink">
-                <p class="flex gap-2 items-center opacity-50 cursor-pointer">
+            <div class="flex gap-2 w-full items-center relative opacity-60">
+                <p class="flex flex-grow gap-2 items-center cursor-pointer" @click="copyLink">
                     {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
                 </p>
+                <NuxtLink :to="`/link/params/${link.id}`" class="flex gap-2 items-center"
+                    ><IconPersons /> Personalize link</NuxtLink
+                >
             </div>
+
+            <p>or</p>
+            <NuxtLink v-if="route.query.qr" :to="route.path" class="btn btn--small btn--dark"
+                >Pay on this device</NuxtLink
+            >
+            <NuxtLink v-else :to="qrUrl" class="btn btn--small btn--dark">Pay with another device</NuxtLink>
         </div>
     </main>
 </template>
@@ -56,6 +67,8 @@
 import { IconHedera } from "#components";
 import { QrCode } from "#components";
 import { ref, onMounted } from "vue";
+const router = useRouter();
+const route = useRoute();
 
 // get current url
 let url = ref("");
@@ -68,20 +81,17 @@ onMounted(() => {
 
 const paymentUrl = ref(null);
 const copied = ref(false);
+const qrUrl = ref(route.path + "?qr=true");
 
 const onUrlChange = (newUrl) => {
     paymentUrl.value = newUrl;
 };
 
-const route = useRoute();
-
-let image = null;
-
 const { data: link, error } = await useAsyncData("link", () => $fetch(`/api/links/${route.params.slug}`));
+const { data: receiver } = await useAsyncData("receiver", () => $fetch(`/api/users/${link.value.authorId}`));
 
 const copyLink = async () => {
     try {
-        console.log(window.location.href);
         await navigator.clipboard.writeText(window.location.href);
         copied.value = true;
 
@@ -94,9 +104,9 @@ const copyLink = async () => {
 };
 
 watchEffect(() => {
-    if (link.value) {
+    if (link.value && receiver.value) {
         useHead({
-            title: link.value.amount + " " + link.value.currency + " to ...",
+            title: "Pay " + link.value.amount + " " + link.value.currency + " to " + receiver.value.name,
             meta: [
                 {
                     name: "description",
@@ -117,20 +127,3 @@ watchEffect(() => {
     }
 });
 </script>
-
-<style scoped>
-.card {
-    &__header {
-        position: absolute;
-        top: -1.875rem;
-        left: calc(50% - 1.875rem);
-        width: 3.75rem;
-        height: 3.75rem;
-        border-radius: 50em;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: var(--color-secondary);
-    }
-}
-</style>

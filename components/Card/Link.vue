@@ -1,5 +1,7 @@
 <template>
-    <div class="card-link bg-white rounded-2xl shadow-sm hover:bg-background border border-body/10 transition-colors">
+    <div
+        class="card-link bg-white rounded-2xl shadow-sm hover:bg-background border border-body/10 transition-colors cursor-pointer"
+    >
         <div class="grid md:grid-cols-12 gap-5 items-center flex-start relative p-5" @click="togglePanel">
             <div class="md:col-span-7 lg:col-span-5 flex items-center gap-4">
                 <div class="card-link__circle">
@@ -17,12 +19,17 @@
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-col gap-1">
-                    <h3 class="color-body opacity-50 font-regular text-lg">{{ name }}</h3>
-                    <span class="color-body/50 text-sm font-light"> {{ memo }}</span>
+                <div class="flex flex-col">
+                    <h3 class="color-body opacity-50 font-regular text-lg">
+                        {{ name }}
+                        <i v-if="!name">No description</i>
+                    </h3>
+                    <span class="color-body/50 text-sm font-normal"> {{ memo }}<i v-if="!memo">No memo</i></span>
                 </div>
             </div>
-            <div class="md:col-span-2 lg:col-span-1 hidden md:flex">{{ amount }} {{ currency }}</div>
+            <div class="md:col-span-2 lg:col-span-1 hidden md:flex">
+                {{ amount }} {{ currency ? currency.toUpperCase() : "" }}
+            </div>
 
             <div class="md:col-span-2 hidden lg:flex">
                 {{ new Date(createdAt).toLocaleDateString("en-US") }}
@@ -64,12 +71,21 @@
                 </div>
 
                 <div class="flex gap-5 p-5">
-                    <div class="flex flex-grow">
-                        Share: <NuxtLink :to="`/link/${id}`" target="_blank">(link)</NuxtLink>
-                        <NuxtLink :to="`/link/${id}?qr=true`" target="_blank">(QR)</NuxtLink>
+                    <div class="flex flex-grow items-center gap-2" v-if="name && amount && currency">
+                        Share:
+                        <NuxtLink :to="`/link/view/${id}`" target="_blank" class="opacity-50 flex gap-1 items-center"
+                            ><IconLink /> Link</NuxtLink
+                        >
+                        <NuxtLink
+                            :to="`/link/view/${id}?qr=true`"
+                            target="_blank"
+                            class="opacity-50 flex gap-1 items-center"
+                            ><IconQR /> QR</NuxtLink
+                        >
                     </div>
+                    <div v-else class="flex flex-grow">Create link</div>
                     <div class="flex">
-                        <div class="cursor-pointer"><IconTrash /></div>
+                        <div class="cursor-pointer" @click="handleDelete(id)"><IconTrash /></div>
                     </div>
                 </div>
             </div>
@@ -80,7 +96,6 @@
 <script setup>
 import { HederaService } from "~/lib/hedera";
 import IconTrash from "../Icon/Trash.vue";
-import { useTemplateRef, onMounted } from "vue";
 
 const hederaService = new HederaService();
 
@@ -126,27 +141,25 @@ const props = defineProps({
         type: String,
         required: false,
     },
+    handleDelete: {
+        type: Function,
+        required: true,
+    },
 });
 
 const colorHash = (s) => [...s].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
 
-let progress;
+let progress = ref(0);
 
 if (props.maxPayments && props.payments) {
     let numPayments = props.payments.length;
-    progress = (numPayments / props.maxPayments) * 100;
+    progress.value = (numPayments / props.maxPayments) * 100;
 } else {
-    progress = 100;
+    progress.value = 100;
 }
-
-// console.log(props.payments);
 
 let state = "";
 let totalPayments = 0;
-
-// let mirrorNodeData = await hederaService.getAllTransactionData(payment.transactionId, payment.accountId);
-
-// let memo = ref(mirrorNodeData.transactions[0]["memo_base64"]);
 
 // map all payment transactionIds
 let paymentIds = props.payments.map((payment) => payment.transactionId);
@@ -191,6 +204,7 @@ function togglePanel() {
         align-items: center;
         background: var(--gradient-primary);
         transform: scaleX(-1);
+        padding: 0.75rem;
 
         &__mask {
             position: absolute;

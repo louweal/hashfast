@@ -32,6 +32,12 @@ export default defineNuxtConfig({
                     href: "https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap",
                 },
             ],
+            meta: [
+                {
+                    name: "description",
+                    content: "Create and pay payment links for your HBAR, USDC on Hedera",
+                },
+            ],
         },
     },
     nitro: {

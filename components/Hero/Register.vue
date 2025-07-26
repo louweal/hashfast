@@ -60,9 +60,40 @@
                                 </div>
                             </form>
                         </div>
+                        <div v-else-if="showDetailsForm">
+                            <h2 class="text-[2rem] text-body">Enter your details</h2>
+
+                            <form @submit.prevent="updateUser" class="space-y-4">
+                                <div class="flex flex-col gap-2">
+                                    <label for="email" class="block text-body">Name</label>
+                                    <input v-model="user.name" type="text" id="name" required class="" />
+                                </div>
+                                <div class="flex flex-col gap-2">
+                                    <label for="password" class="block text-body">Hedera Wallet ID</label>
+                                    <div class="flex gap-3">
+                                        <input
+                                            v-model="user.wallet"
+                                            type="text"
+                                            id="wallet"
+                                            class="flex-grow"
+                                            placeholder="0.0.1234567"
+                                            required
+                                        />
+                                        <button class="btn btn--dark btn--square">Detect</button>
+                                    </div>
+                                </div>
+                                <div v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</div>
+                                <div class="flex gap-4">
+                                    <button type="submit" :disabled="creating" class="btn">
+                                        {{ creating ? "Processing..." : "Save" }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                         <div v-else class="flex flex-col gap-4">
                             <h2 class="text-[2rem] text-body">Registration successful!</h2>
                             <p class="text-body">You can now log in with your email and password.</p>
+
                             <NuxtLink to="/login" class="btn self-start">Login</NuxtLink>
                         </div>
                     </div>
@@ -74,11 +105,19 @@
 
 <script setup>
 const showCreateForm = ref(true);
+const showDetailsForm = ref(false);
 const creating = ref(false);
 const newUser = ref({
     email: "",
     password: "",
     password2: "",
+});
+
+let userId = null;
+
+const user = ref({
+    name: "",
+    wallet: "",
 });
 
 let error = ref(null);
@@ -93,17 +132,40 @@ const createUser = async () => {
             throw new Error("Passwords do not match");
         }
 
-        await $fetch("/api/users", {
+        const response = await $fetch("/api/users", {
             method: "POST",
             body: newUser.value,
         });
 
+        userId = response.id;
+
         // Reset form and refresh data
         newUser.value = { email: "", password: "", password2: "" };
         showCreateForm.value = false;
+        showDetailsForm.value = true;
         // await refresh();
     } catch (error) {
         console.error("Failed to create user:", error);
+    } finally {
+        creating.value = false;
+    }
+};
+
+const updateUser = async () => {
+    creating.value = true;
+    try {
+        if (!user.value.wallet.startsWith("0.0.")) {
+            error.value = "Invalid Hedera Wallet ID";
+            throw new Error("Invalid Hedera Wallet ID");
+        }
+
+        await $fetch("/api/users/" + userId, {
+            method: "PATCH",
+            body: user.value,
+        });
+        showDetailsForm.value = false;
+    } catch (error) {
+        console.error("Failed to update user:", error);
     } finally {
         creating.value = false;
     }

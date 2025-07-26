@@ -10,7 +10,7 @@
                             to="/dashboard/links"
                             class="px-3 py-2 bg-body/20 rounded-lg flex items-center gap-2 transition-colors"
                         >
-                            <IconLink />
+                            <IconLinkGlow />
                             Links
                         </NuxtLink>
                         <NuxtLink
@@ -25,7 +25,7 @@
                 <div class="flex gap-5 flex-wrap md:flex-nowrap">
                     <div class="flex gap-2 order-1 flex-grow">
                         <div class="btn">All</div>
-                        <div class="btn btn--light">Active</div>
+                        <div class="btn btn--light" @click="handleFilterActive">Active</div>
                     </div>
 
                     <input
@@ -50,6 +50,7 @@
                         :="link"
                         :class="`animate-slide-up`"
                         :style="{ animationDelay: `${index * 50}ms` }"
+                        :handleDelete="handleDelete"
                     />
                 </div>
             </div>
@@ -58,18 +59,49 @@
 </template>
 
 <script setup>
+import { ref } from "vue";
+
 useHead({
     title: "Dashboard - HashFast",
 });
 
 let search;
 
-let currentUser = { id: "cmcq08j7h0000dp4ofgfpwg4n" }; // to do
+let currentUser = { id: "cmd5pyr950008d4irlpf9xu3j" }; // to do
 
-// or
-const links = await $fetch("/api/links", {
-    query: { authorId: currentUser.id }, // filtered
-});
+const links = ref(
+    await $fetch("/api/links", {
+        query: { authorId: currentUser.id }, // filtered
+    }),
+);
+
+const isActiveLink = function (link) {
+    if (link.expires) {
+        if (new Date(link.expires) < Date.now()) {
+            return false;
+        }
+    }
+
+    return true;
+};
+
+const handleFilterActive = function () {
+    links.value = links.value.filter((link) => isActiveLink(link));
+};
+
+const handleDelete = async (id) => {
+    try {
+        await $fetch(`/api/links/${id}`, {
+            method: "DELETE",
+        });
+
+        links.value = links.value.filter((link) => link.id !== id);
+    } catch (error) {
+        if (error.statusCode === 400) {
+            console.error("Error:", error.message);
+        }
+    }
+};
 </script>
 
 <style scoped>

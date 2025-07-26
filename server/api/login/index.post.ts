@@ -19,8 +19,6 @@ export default defineEventHandler(async (event) => {
     const body = await readBody(event);
     const { email, password } = LoginInput.parse(body);
 
-    console.log("login: " + email);
-
     // look up the user by email
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {

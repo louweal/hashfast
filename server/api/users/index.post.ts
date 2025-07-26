@@ -1,4 +1,4 @@
-// server/api/users.post.ts
+// server/api/index.post.ts
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
