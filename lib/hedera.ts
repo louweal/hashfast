@@ -1,5 +1,9 @@
 import { Client, AccountId, PrivateKey, Hbar, TransferTransaction, AccountBalanceQuery } from "@hashgraph/sdk";
 import type { Link } from "@prisma/client";
+import { HashConnect, HashConnectConnectionState } from "hashconnect";
+import type { SessionData } from "hashconnect";
+
+import { LedgerId } from "@hashgraph/sdk";
 
 type Network = "mainnet" | "testnet" | "previewnet";
 
@@ -23,6 +27,17 @@ export class HederaService {
     private network: String;
     private networkUrl: String;
 
+    private appMetadata = {
+        name: "HashFast",
+        description: "HashFast",
+        icons: ["http://localhost:3000/favicon.ico"],
+        url: "http://localhost:3000/",
+    };
+
+    private hashconnect: HashConnect;
+    private state: HashConnectConnectionState = HashConnectConnectionState.Disconnected;
+    private pairingData?: SessionData | null;
+
     constructor() {
         const config = useRuntimeConfig();
 
@@ -36,6 +51,41 @@ export class HederaService {
             this.network = "testnet";
             this.networkUrl = "https://testnet.mirrornode.hedera.com";
         }
+
+        //create the hashconnect instance
+        this.hashconnect = new HashConnect(
+            LedgerId.TESTNET,
+            "27cf4e078673e78af436d3f8b7f33ad8",
+            this.appMetadata,
+            true,
+        );
+    }
+
+    async initHashConnect() {
+        console.log("hello");
+
+        //register events
+        this.setUpHashConnectEvents();
+
+        //initialize
+        await this.hashconnect.init();
+
+        //open pairing modal
+        this.hashconnect.openPairingModal();
+    }
+
+    setUpHashConnectEvents() {
+        this.hashconnect.pairingEvent.on((newPairing) => {
+            this.pairingData = newPairing;
+        });
+
+        this.hashconnect.disconnectionEvent.on((data) => {
+            this.pairingData = null;
+        });
+
+        this.hashconnect.connectionStatusChangeEvent.on((connectionStatus) => {
+            this.state = connectionStatus;
+        });
     }
 
     parseTransactionId(transactionId: string): string {
@@ -98,6 +148,10 @@ export class HederaService {
         if (!link.currency) {
             throw new Error("Link does not have a currency");
         }
+
+        let initData = await this.initHashConnect();
+
+        console.log(initData);
 
         const toAccount = AccountId.fromString(link.accountId);
 

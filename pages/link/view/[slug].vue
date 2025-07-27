@@ -1,7 +1,7 @@
 <template>
     <main class="min-h-dvh flex justify-center item-center">
         <div class="container flex flex-col justify-center items-center gap-4 w-full sm:w-md">
-            <div class="bg-white border border-body/10 rounded-2xl relative pt-14 w-full">
+            <div class="bg-white border border-body/10 rounded-2xl relative pt-14 w-full" v-if="link">
                 <div class="card__header">
                     <img v-if="link.image" :src="link.image" width="60" height="60" />
                     <div v-else>
@@ -113,7 +113,6 @@ let url = ref("");
 
 // get url params
 const params = useRoute().query;
-console.log(params);
 
 onMounted(() => {
     if (typeof window !== "undefined") {
@@ -140,7 +139,8 @@ for (const [key, value] of Object.entries(params)) {
     }
 }
 
-const expired = baseLink.value.expires ? ref(new Date(baseLink.value.expires) < Date.now()) : ref(false);
+const expired =
+    baseLink.value && baseLink.value.expires ? ref(new Date(baseLink.value.expires) < Date.now()) : ref(false);
 
 const link = ref({
     ...baseLink.value,
@@ -148,10 +148,15 @@ const link = ref({
 
 const currencies = link.currency ? link.currency.toUpperCase() : "HBAR or USDC";
 
-let pageTitle =
-    link.value.amount && link.value.currency
-        ? "Pay " + link.value.amount + " " + link.value.currency.toUpperCase() + " to " + receiver.value.name
-        : "Pay " + receiver.value.name;
+let pageTitle = "HashFast";
+
+if (receiver.value) {
+    if (link.value.amount && link.value.currency) {
+        pageTitle = "Pay " + link.value.amount + " " + link.value.currency.toUpperCase() + " to " + receiver.value.name;
+    } else {
+        pageTitle = "Pay " + receiver.value.name;
+    }
+}
 
 const copyLink = async () => {
     try {

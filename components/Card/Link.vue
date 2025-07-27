@@ -69,12 +69,12 @@
                 <div class="flex gap-5 p-5">
                     <div class="flex flex-grow items-center gap-2">
                         Share:
-                        <NuxtLink :to="`/link/view/${id}`" target="_blank" class="opacity-50 flex gap-1 items-center"
+                        <NuxtLink :to="`/link/view/${id}`" xxxtarget="_blank" class="opacity-50 flex gap-1 items-center"
                             ><IconLink /> Link</NuxtLink
                         >
                         <NuxtLink
                             :to="`/link/view/${id}?qr=true`"
-                            target="_blank"
+                            xxxtarget="_blank"
                             class="opacity-50 flex gap-1 items-center"
                             ><IconQR /> QR</NuxtLink
                         >

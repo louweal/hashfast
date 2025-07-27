@@ -17,25 +17,27 @@
                         <span class="flex justify-center items-center size-6 bg-black rounded-full -ml-3 text-primary"
                             >+</span
                         >
-                        New link</NuxtLink
-                    >
+                        New link
+                    </NuxtLink>
                 </div>
 
-                <TransitionGroup class="flex flex-col gap-2" name="list" tag="div" v-if="filteredLinks.length > 0">
-                    <CardLink
-                        v-for="(link, index) in filteredLinks"
-                        :key="link.id"
-                        v-bind="link"
-                        :handleDelete="handleDelete"
-                    />
-                </TransitionGroup>
+                <ClientOnly>
+                    <div v-if="!loading && isLoggedIn && filteredLinks.length > 0">
+                        <TransitionGroup class="flex flex-col gap-2" name="list" tag="div">
+                            <CardLink
+                                v-for="(link, index) in filteredLinks"
+                                :key="link.id"
+                                v-bind="link"
+                                :handleDelete="handleDelete"
+                            />
+                        </TransitionGroup>
+                    </div>
 
-                <div v-else class="flex flex-col gap-2">
-                    <div class="flex flex-col gap-2">
+                    <div v-else>
                         <h2 class="text-2xl text-body">No links found</h2>
                         <p class="text-body">You don't have any links yet.</p>
                     </div>
-                </div>
+                </ClientOnly>
             </div>
         </section>
     </main>
