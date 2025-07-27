@@ -1,9 +1,17 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-    // Public paths that don't require authentication
-    const publicPaths = ["/login", "/register", "/"];
+    const publicPages = ["/", "/login", "/register"];
 
-    if (publicPaths.includes(to.path) || 1 === 1) {
-        // Allow access to public pages
-        return;
+    if (publicPages.includes(to.path)) return;
+
+    try {
+        const { data } = await useFetch("/api/auth/me", {
+            server: true,
+        });
+
+        if (!data.value?.user) {
+            return navigateTo("/login");
+        }
+    } catch {
+        return navigateTo("/login");
     }
 });

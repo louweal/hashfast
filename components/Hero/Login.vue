@@ -20,7 +20,7 @@
                 <div class="md:col-span-5">
                     <div class="animate-slide-up bg-white p-8 rounded-3xl">
                         <div class="flex flex-col gap-4">
-                            <h2 class="text-[2rem] text-body">Register now</h2>
+                            <h2 class="text-[2rem] text-body">Login</h2>
                             <form @submit.prevent="handleLogin" class="space-y-4">
                                 <div class="flex flex-col gap-2">
                                     <label for="email" class="block text-body">Email</label>
@@ -59,14 +59,33 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
+
 const email = ref("");
 const password = ref("");
-const { login, pending, error } = useAuth();
+const error = ref("");
+const loading = ref(false);
+const router = useRouter();
 
-async function handleLogin() {
-    await login(email.value, password.value);
-    if (!error.value) {
-        navigateTo("/dashboard/links");
+const handleLogin = async () => {
+    error.value = "";
+    loading.value = true;
+
+    console.log("email.value :>> ", email.value);
+    console.log("password.value :>> ", password.value);
+
+    try {
+        const res = await $fetch("/api/auth/login", {
+            method: "POST",
+            body: { email: email.value, password: password.value },
+            credentials: "include", // send cookies
+        });
+
+        await router.push("/dashboard/links");
+    } catch (err) {
+        error.value = err?.data?.message || "Login failed";
+    } finally {
+        loading.value = false;
     }
-}
+};
 </script>

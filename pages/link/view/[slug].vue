@@ -13,9 +13,9 @@
                 </div>
                 <div class="p-5 flex flex-col gap-4">
                     <h3 class="font-bold text-xl" v-if="baseLink.amount && baseLink.currency">
-                        To pay: {{ link.amount }} {{ link.currency }}
+                        To pay: {{ link.amount }} <span class="uppercase">{{ link.currency }}</span>
                     </h3>
-                    <div v-else-if="!qrUrl" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                    <div v-else-if="!isQrUrl" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                         <input type="text" placeholder="Enter the amount" class="sm:col-span-2" v-model="link.amount" />
 
                         <input
@@ -47,7 +47,10 @@
                     </div>
                     <div v-if="link.expires">
                         <h4>Pay before:</h4>
-                        <p class="opacity-50">{{ new Date(link.expires).toLocaleDateString("en-US") }}</p>
+                        <div class="flex justify-between gap-3 items-center">
+                            <p class="opacity-50">{{ new Date(link.expires).toLocaleDateString("en-US") }}</p>
+                            <span v-if="expired" class="bg-body/20 text-body rounded-sm px-3">expired</span>
+                        </div>
                     </div>
                 </div>
                 <div class="border-t border-t-body/15 p-5">
@@ -63,7 +66,7 @@
                             </ul>
                         </div>
                         <div
-                            v-if="!route.query.qr"
+                            v-if="!route.query.qr && !expired"
                             class="btn gap-3"
                             :class="{ 'btn--disabled': !link.amount }"
                             @click="link.amount ? handlePayment() : null"
@@ -73,7 +76,14 @@
                     </div>
                 </div>
             </div>
-            <div class="flex gap-2 w-full items-center relative opacity-60">
+            <p>or</p>
+            <NuxtLink v-if="route.query.qr" :to="route.path" class="btn btn--small btn--dark"
+                >Pay on this device</NuxtLink
+            >
+            <NuxtLink v-else :to="qrUrl" class="btn btn--small btn--dark">Pay with another device</NuxtLink>
+        </div>
+        <div class="bg-white shadow border-t absolute bottom-0 left-0 right-0 p-3" v-if="user">
+            <div class="opacity-60 flex gap-2 xxxw-full items-center">
                 <p class="flex flex-grow gap-2 items-center cursor-pointer" @click="copyLink">
                     {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
                 </p>
@@ -81,12 +91,6 @@
                     ><IconPersons /> Personalize link</NuxtLink
                 >
             </div>
-
-            <p>or</p>
-            <NuxtLink v-if="route.query.qr" :to="route.path" class="btn btn--small btn--dark"
-                >Pay on this device</NuxtLink
-            >
-            <NuxtLink v-else :to="qrUrl" class="btn btn--small btn--dark">Pay with another device</NuxtLink>
         </div>
     </main>
 </template>
@@ -96,13 +100,20 @@ import { HederaService } from "~/lib/hedera";
 import { IconHedera } from "#components";
 import { QrCode } from "#components";
 import { ref, onMounted } from "vue";
-const router = useRouter();
+
 const route = useRoute();
 
 const hederaService = new HederaService();
 
+const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
+await fetchUser();
+
 // get current url
 let url = ref("");
+
+// get url params
+const params = useRoute().query;
+console.log(params);
 
 onMounted(() => {
     if (typeof window !== "undefined") {
@@ -113,13 +124,23 @@ onMounted(() => {
 const paymentUrl = ref(null);
 const copied = ref(false);
 const qrUrl = ref(route.path + "?qr=true");
+const isQrUrl = ref(route.query.qr === "true");
 
 const onUrlChange = (newUrl) => {
     paymentUrl.value = newUrl;
 };
 
-const { data: baseLink, error } = await useAsyncData("baseLink", () => $fetch(`/api/links/${route.params.slug}`));
+const { data: baseLink, linkError } = await useAsyncData("baseLink", () => $fetch(`/api/links/${route.params.slug}`));
 const { data: receiver } = await useAsyncData("receiver", () => $fetch(`/api/users/${baseLink.value.authorId}`));
+
+// add url param values to baselink
+for (const [key, value] of Object.entries(params)) {
+    if (baseLink.value[key] != value) {
+        baseLink.value[key] = value;
+    }
+}
+
+const expired = baseLink.value.expires ? ref(new Date(baseLink.value.expires) < Date.now()) : ref(false);
 
 const link = ref({
     ...baseLink.value,

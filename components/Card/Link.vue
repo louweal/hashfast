@@ -27,21 +27,17 @@
                     <span class="color-body/50 text-sm font-normal"> {{ memo }}<i v-if="!memo">No memo</i></span>
                 </div>
             </div>
-            <div class="md:col-span-2 lg:col-span-1 hidden md:flex">
-                {{ amount }} {{ currency ? currency.toUpperCase() : "" }}
-            </div>
+            <div class="md:col-span-2 hidden md:flex">{{ amount }} {{ currency ? currency.toUpperCase() : "" }}</div>
 
             <div class="md:col-span-2 hidden lg:flex">
                 {{ new Date(createdAt).toLocaleDateString("en-US") }}
             </div>
-            <div class="md:col-span-2 lg:col-span-2 hidden lg:flex items-center gap-2">
+            <!-- <div class="md:col-span-2 lg:col-span-2 hidden lg:flex items-center gap-2">
                 <div class="rounded-md px-3 py-2" :style="`background-color: hsl(${colorHash(accountId)}, 50%, 90%)`">
                     {{ accountId }}
                 </div>
-            </div>
-            <div
-                class="md:col-span-2 lg:col-span-1 flex flex-start absolute top-5 right-5 md:relative md:right-auto md:top-auto"
-            >
+            </div> -->
+            <div class="md:col-span-2 flex flex-start absolute top-5 right-5 md:relative md:right-auto md:top-auto">
                 <div class="bg-primary/20 text-primary rounded-md px-3 py-1 md:py-2" v-if="state == 'waiting'">
                     waiting
                 </div>
@@ -105,25 +101,28 @@ const props = defineProps({
         required: true,
     },
     name: {
-        type: String,
-        required: true,
+        type: [String, null],
+        required: false,
     },
     memo: {
-        type: String,
+        type: [String, null],
         required: false,
     },
     image: {
-        type: String,
+        type: [String, null],
         required: false,
     },
     amount: {
-        type: String,
+        type: [String, null],
+        required: false,
     },
     currency: {
-        type: String,
+        type: [String, null],
+        required: false,
     },
     maxPayments: {
-        type: Number,
+        type: [String, null],
+        required: false,
     },
     payments: {
         type: Array,

@@ -3,6 +3,7 @@
         <Header :gradient="true" />
         <div class="container flex flex-col justify-center items-center gap-4 pt-40">
             <form
+                v-if="showForm"
                 @submit.prevent="createLink"
                 class="block bg-white border border-body/10 rounded-2xl relative min-w-full sm:min-w-md sm:w-md pt-16"
             >
@@ -61,7 +62,7 @@
                             </div>
                             <div class="flex flex-col gap-1">
                                 <h4>Expiration date</h4>
-                                <input type="date" v-model="baseLink.expires" />
+                                <input type="date" v-model="link.expires" />
                             </div>
                         </div>
                     </div>
@@ -78,19 +79,49 @@
                                 </li>
                             </ul>
                         </div>
-                        <button type="submit" class="btn gap-3"><span>Next</span></button>
+                        <button type="submit" class="btn gap-3">
+                            <span>Next</span> <ChevronDown class="-rotate-90" color="#816a37" />
+                        </button>
                     </div>
                 </div>
             </form>
+            <div
+                v-else
+                class="block bg-white border border-body/10 rounded-2xl relative min-w-full sm:min-w-md sm:w-md"
+            >
+                <div class="p-5 flex flex-col gap-4 items-start">
+                    <div class="btn" @click="goBack"><ChevronDown class="rotate-90" /> Back</div>
+
+                    <h3 class="font-bold text-2xl">Personalized link created!</h3>
+
+                    <p>
+                        Your link is ready! You can now share it. Don't lose it because it is not stored on your
+                        account.
+                    </p>
+
+                    <div class="flex w-full">
+                        <p class="flex flex-grow gap-2 items-center cursor-pointer" @click="copyLink">
+                            {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
+                        </p>
+
+                        <NuxtLink :to="linkWithParams" class="btn btn--small btn--dark flex gap-2"
+                            ><IconLink color="#fff" />Visit link</NuxtLink
+                        >
+                    </div>
+
+                    <SocialShare :permalink="domainUrl + linkWithParams" :title="'Payment request: ' + link.name" />
+                </div>
+            </div>
         </div>
     </main>
 </template>
 
 <script setup>
 import { ref } from "vue";
-const router = useRouter();
+import ChevronDown from "~/components/Icon/ChevronDown.vue";
 const route = useRoute();
-let dummyUser = { id: "cmd5pyr950008d4irlpf9xu3j" }; // to do
+const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
+await fetchUser();
 
 useHead({
     title: "Personalize link - HashFast",
@@ -98,13 +129,13 @@ useHead({
 
 const username = ref(null);
 const showOptionalFields = ref(false);
+const showForm = ref(true);
+const linkWithParams = ref(null);
+const copied = ref(false);
+const domainUrl = ref(window.location.origin);
+const newDetails = ref({});
 
-console.log(route.params.slug);
-
-// get user name and wallet
-const { data: user } = await useAsyncData("user", () => $fetch(`/api/users/${dummyUser.id}`));
-
-const { data: baseLink, error } = await useAsyncData("baseLink", () => $fetch(`/api/links/${route.params.slug}`));
+const { data: baseLink, linkError } = await useAsyncData("baseLink", () => $fetch(`/api/links/${route.params.slug}`));
 
 console.log(baseLink);
 // deep copy baselink to link
@@ -116,16 +147,46 @@ if (user) {
     username.value = user.value.name;
 }
 
+const goBack = () => {
+    showForm.value = true;
+    linkWithParams.value = null;
+};
+
 const toggleOptionalFields = () => {
     showOptionalFields.value = !showOptionalFields.value;
 };
 
 const createLink = async () => {
     try {
-        // go to page dashboard/links
-        navigateTo("/dashboard/links");
+        for (const [key, value] of Object.entries(baseLink.value)) {
+            if (value !== link.value[key]) {
+                newDetails.value[key] = link.value[key];
+            }
+        }
+
+        console.log(newDetails.value);
+
+        let viewPath = route.path.replace("/params/", "/view/");
+
+        linkWithParams.value = viewPath + "?" + new URLSearchParams(newDetails.value).toString();
+        showForm.value = false;
     } catch (error) {
         console.error("Failed to create link:", error);
+    }
+};
+
+const copyLink = async () => {
+    try {
+        console.log(domainUrl);
+
+        await navigator.clipboard.writeText(domainUrl + linkWithParams.value);
+        copied.value = true;
+
+        setTimeout(() => {
+            copied.value = false;
+        }, 5000);
+    } catch (err) {
+        console.error("Failed to copy:", err);
     }
 };
 </script>

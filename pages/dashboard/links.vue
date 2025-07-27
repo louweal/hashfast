@@ -4,24 +4,7 @@
 
         <section class="section">
             <div class="container flex flex-col gap-8">
-                <nav class="border-b border-body/20 py-4">
-                    <div class="flex gap-4">
-                        <NuxtLink
-                            to="/dashboard/links"
-                            class="px-3 py-2 bg-body/20 rounded-lg flex items-center gap-2 transition-colors"
-                        >
-                            <IconLinkGlow />
-                            Links
-                        </NuxtLink>
-                        <NuxtLink
-                            to="/dashboard/subscriptions"
-                            class="px-3 py-2 hover:bg-body/20 rounded-lg flex items-center gap-2 transition-colors"
-                        >
-                            <IconSubscription />
-                            Subscriptions
-                        </NuxtLink>
-                    </div>
-                </nav>
+                <DashboardNav :active="'links'" />
                 <div class="flex gap-5 flex-wrap md:flex-nowrap">
                     <div class="flex gap-2 order-1 flex-grow">
                         <div class="btn" :class="{ 'btn--light': !showAll }" @click="handleFilterAll">All</div>
@@ -38,7 +21,7 @@
                     >
                 </div>
 
-                <TransitionGroup class="flex flex-col gap-2" name="list" tag="div">
+                <TransitionGroup class="flex flex-col gap-2" name="list" tag="div" v-if="filteredLinks.length > 0">
                     <CardLink
                         v-for="(link, index) in filteredLinks"
                         :key="link.id"
@@ -46,6 +29,13 @@
                         :handleDelete="handleDelete"
                     />
                 </TransitionGroup>
+
+                <div v-else class="flex flex-col gap-2">
+                    <div class="flex flex-col gap-2">
+                        <h2 class="text-2xl text-body">No links found</h2>
+                        <p class="text-body">You don't have any links yet.</p>
+                    </div>
+                </div>
             </div>
         </section>
     </main>
@@ -60,14 +50,20 @@ useHead({
 
 const searchText = ref("");
 const showAll = ref(true);
+const allLinks = ref([]);
 
-let currentUser = { id: "cmd5pyr950008d4irlpf9xu3j" }; // to do
+const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
+await fetchUser();
 
-const allLinks = ref(
-    await $fetch("/api/links", {
-        query: { authorId: currentUser.id }, // filtered
-    }),
-);
+if (user) {
+    try {
+        allLinks.value = await $fetch("/api/links", {
+            query: { authorId: user.id }, // filtered
+        });
+    } catch (error) {
+        console.error("Failed to fetch links:", error);
+    }
+}
 
 const links = computed(() => {
     return showAll.value ? allLinks.value : allLinks.value.filter((link) => isActiveLink(link));

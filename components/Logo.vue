@@ -1,5 +1,5 @@
 <template>
-    <NuxtLink href="/" class="logo">
+    <NuxtLink :to="homeUrl" class="logo">
         <svg width="141" height="24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
                 class="flash"
@@ -14,7 +14,14 @@
     </NuxtLink>
 </template>
 
-<script setup></script>
+<script setup>
+const props = defineProps({
+    homeUrl: {
+        type: String,
+        default: "/",
+    },
+});
+</script>
 
 <style scoped>
 .logo {

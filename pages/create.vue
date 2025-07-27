@@ -95,7 +95,8 @@
 
 <script setup>
 import { ref } from "vue";
-let dummyUser = { id: "cmd5pyr950008d4irlpf9xu3j" }; // to do
+const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
+await fetchUser();
 
 useHead({
     title: "Create link - HashFast",
@@ -109,7 +110,7 @@ const imageUrl = ref(null);
 const showOptionalFields = ref(false);
 
 const newLink = ref({
-    authorId: dummyUser.id,
+    authorId: user.id,
     image: null,
     amount: null,
     currency: "hbar",
@@ -120,15 +121,10 @@ const newLink = ref({
     accountId: null,
 });
 
-// get user name and wallet
-const { data: user } = await useAsyncData("user", () => $fetch(`/api/users/${dummyUser.id}`));
-
 if (user) {
     username.value = user.value.name;
     newLink.value.accountId = user.value.wallet;
 }
-// username.value = user.value.name;
-// newLink.value.accountId = user.value.wallet;
 
 // Generate object URL whenever file changes
 watch(imageFile, (newFile) => {
@@ -168,11 +164,8 @@ const handleFileChange = async (event) => {
 
 const createLink = async () => {
     try {
-        // console.log(newLink.value);
-
         newLink.value.expires = newLink.value.expires ? new Date(newLink.value.expires) : null;
-
-        console.log(newLink.value.expires);
+        newLink.value.authorId = user.value.id;
 
         const response = await $fetch("/api/links", {
             method: "POST",
