@@ -11,7 +11,7 @@
                 <div v-if="route.query.qr" class="flex justify-center border-b border-body/15">
                     <QrCode :value="url" @change="onUrlChange" />
                 </div>
-                <div class="p-5 flex flex-col gap-4">
+                <div class="p-5 flex flex-col gap-4" v-if="baseLink">
                     <h3 class="font-bold text-xl" v-if="baseLink.amount && baseLink.currency">
                         To pay: {{ link.amount }} <span class="uppercase">{{ link.currency }}</span>
                     </h3>
@@ -71,7 +71,8 @@
                             :class="{ 'btn--disabled': !link.amount }"
                             @click="link.amount ? handlePayment() : null"
                         >
-                            <IconHedera class="-ml-3" /> <span>Pay<span class="hidden md:inline"> now</span></span>
+                            <IconHedera class="-ml-3" />
+                            <span>Pay<span class="hidden md:inline"> now</span></span>
                         </div>
                     </div>
                 </div>
@@ -83,7 +84,7 @@
             <NuxtLink v-else :to="qrUrl" class="btn btn--small btn--dark">Pay with another device</NuxtLink>
         </div>
         <div class="bg-white shadow border-t absolute bottom-0 left-0 right-0 p-3" v-if="user">
-            <div class="opacity-60 flex gap-2 xxxw-full items-center">
+            <div class="opacity-60 flex gap-2 mx-auto sm:w-md items-center">
                 <p class="flex flex-grow gap-2 items-center cursor-pointer" @click="copyLink">
                     {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
                 </p>

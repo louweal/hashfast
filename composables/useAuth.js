@@ -24,11 +24,22 @@ export function useAuth() {
         }
     };
 
+    const logout = async () => {
+        try {
+            await $fetch("/api/auth/logout", { method: "POST", credentials: "include" });
+            user.value = null;
+            await navigateTo("/");
+        } catch (err) {
+            console.error("Failed to logout:", err);
+        }
+    };
+
     return {
         user,
         loading,
         error,
         isLoggedIn,
         fetchUser,
+        logout,
     };
 }

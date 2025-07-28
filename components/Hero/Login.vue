@@ -71,9 +71,6 @@ const handleLogin = async () => {
     error.value = "";
     loading.value = true;
 
-    console.log("email.value :>> ", email.value);
-    console.log("password.value :>> ", password.value);
-
     try {
         const res = await $fetch("/api/auth/login", {
             method: "POST",

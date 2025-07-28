@@ -35,7 +35,7 @@ export class HederaService {
     };
 
     private hashconnect: HashConnect;
-    private state: HashConnectConnectionState = HashConnectConnectionState.Disconnected;
+    public state: HashConnectConnectionState = HashConnectConnectionState.Disconnected;
     private pairingData?: SessionData | null;
 
     constructor() {
@@ -72,6 +72,11 @@ export class HederaService {
 
         //open pairing modal
         this.hashconnect.openPairingModal();
+
+        console.log(this.state);
+
+        // return a boolean to check if we are connected
+        return this.state;
     }
 
     setUpHashConnectEvents() {
@@ -86,6 +91,10 @@ export class HederaService {
         this.hashconnect.connectionStatusChangeEvent.on((connectionStatus) => {
             this.state = connectionStatus;
         });
+    }
+
+    isPaired() {
+        return this.state === HashConnectConnectionState.Connected || this.state === HashConnectConnectionState.Paired;
     }
 
     parseTransactionId(transactionId: string): string {

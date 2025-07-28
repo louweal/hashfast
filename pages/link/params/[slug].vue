@@ -100,9 +100,13 @@
                     </p>
 
                     <div class="flex w-full">
-                        <p class="flex flex-grow gap-2 items-center cursor-pointer" @click="copyLink">
+                        <a
+                            :href="domainUrl + linkWithParams"
+                            class="flex flex-grow gap-2 items-center cursor-pointer"
+                            @click="handleCopyClick"
+                        >
                             {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
-                        </p>
+                        </a>
 
                         <NuxtLink :to="linkWithParams" class="btn btn--small btn--dark flex gap-2"
                             ><IconLink color="#fff" />Visit link</NuxtLink
@@ -175,11 +179,16 @@ const createLink = async () => {
     }
 };
 
+function handleCopyClick(event) {
+    event.preventDefault();
+    copyLink();
+}
+
 const copyLink = async () => {
     try {
-        console.log(domainUrl);
+        console.log(domainUrl.value);
 
-        await navigator.clipboard.writeText(domainUrl + linkWithParams.value);
+        await navigator.clipboard.writeText(domainUrl.value + linkWithParams.value);
         copied.value = true;
 
         setTimeout(() => {
