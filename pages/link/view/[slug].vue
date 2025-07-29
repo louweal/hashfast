@@ -1,7 +1,7 @@
 <template>
     <main class="min-h-dvh flex justify-center item-center">
         <div class="container flex flex-col justify-center items-center gap-4 w-full sm:w-md">
-            <div class="bg-white border border-body/10 rounded-2xl relative pt-14 w-full" v-if="link">
+            <div class="bg-white border border-body/10 rounded-2xl relative pt-14 w-full">
                 <div class="card__header">
                     <img v-if="link.image" :src="link.image" width="60" height="60" />
                     <div v-else>
@@ -11,15 +11,15 @@
                 <div v-if="route.query.qr" class="flex justify-center border-b border-body/15">
                     <QrCode :value="url" @change="onUrlChange" />
                 </div>
-                <div class="p-5 flex flex-col gap-4" v-if="baseLink">
-                    <h3 class="font-bold text-xl" v-if="baseLink.amount && baseLink.currency">
+                <div class="p-5 flex flex-col gap-4" v-if="link && baseLink">
+                    <h3 class="font-bold text-xl" v-if="link.amount && link.currency">
                         To pay: {{ link.amount }} <span class="uppercase">{{ link.currency }}</span>
                     </h3>
                     <div v-else-if="!isQrUrl" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                         <input type="text" placeholder="Enter the amount" class="sm:col-span-2" v-model="link.amount" />
 
                         <input
-                            v-if="baseLink.currency"
+                            v-if="baseLink.currency && link.currency"
                             type="text"
                             v-model="link.currency"
                             disabled
@@ -53,9 +53,10 @@
                         </div>
                     </div>
                 </div>
+                <div v-else>No baseLink</div>
                 <div class="border-t border-t-body/15 p-5">
                     <div class="flex">
-                        <div class="flex flex-grow">
+                        <div class="flex flex-grow" v-if="receiver">
                             <ul>
                                 <li>
                                     To: <span class="opacity-50">{{ receiver.name }}</span>
@@ -103,11 +104,24 @@ import { QrCode } from "#components";
 import { ref, onMounted } from "vue";
 
 const route = useRoute();
+const slug = computed(() => route.params.slug);
+
+console.log(route.params.slug);
+const { data: baseLink, error: linkError } = await useAsyncData("baseLink", () =>
+    $fetch(`/api/links/${route.params.slug}`),
+);
 
 const hederaService = new HederaService();
 
 const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
 await fetchUser();
+
+if (error.value) {
+    useError({
+        statusCode: error.value.statusCode,
+        statusMessage: error.value.message,
+    });
+}
 
 // get current url
 let url = ref("");
@@ -130,7 +144,6 @@ const onUrlChange = (newUrl) => {
     paymentUrl.value = newUrl;
 };
 
-const { data: baseLink, linkError } = await useAsyncData("baseLink", () => $fetch(`/api/links/${route.params.slug}`));
 const { data: receiver } = await useAsyncData("receiver", () => $fetch(`/api/users/${baseLink.value.authorId}`));
 
 // add url param values to baselink

@@ -139,7 +139,7 @@ const copied = ref(false);
 const domainUrl = ref(window.location.origin);
 const newDetails = ref({});
 
-const { data: baseLink, linkError } = await useAsyncData("baseLink", () => $fetch(`/api/links/${route.params.slug}`));
+const { data: baseLink } = await useAsyncData("baseLink", () => $fetch(`/api/links/${route.params.slug}`));
 
 console.log(baseLink);
 // deep copy baselink to link

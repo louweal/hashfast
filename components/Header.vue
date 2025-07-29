@@ -62,7 +62,7 @@ const connect = async () => {
 
 const disconnect = async () => {
     try {
-        console.log("todo disconnect");
+        await hederaService.disconnectHashConnect();
     } catch (err) {
         console.error("Failed to disconnect:", err);
     }

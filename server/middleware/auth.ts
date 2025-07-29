@@ -1,18 +1,29 @@
-// import { verify } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
 
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export default defineEventHandler(async (event) => {
-    const publicPaths = ["/", "/login", "/register", "/api/auth/login", "/api/auth/register"];
+    const publicPaths = ["/", "/login", "/register", "/api/auth/me", "/api/auth/login"];
 
     const url = getRequestURL(event).pathname;
 
     if (publicPaths.includes(url)) return;
 
+    if (event.path.startsWith("/api/links") && event.method === "GET") {
+        return;
+    }
+    if (event.path.startsWith("/api/users") && event.method === "GET") {
+        return;
+    }
+    if (url.startsWith("/link/view/")) {
+        return;
+    }
+
     const token = getCookie(event, "auth_token");
     if (!token) {
-        throw createError({ statusCode: 401, message: "Unauthorized" });
+        // throw createError({ statusCode: 401, message: "Unauthorized!" });
+
+        return sendRedirect(event, "/login", 302);
     }
 
     try {

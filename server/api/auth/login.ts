@@ -23,13 +23,13 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 401, message: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: user.id, email }, JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: user.id, email }, JWT_SECRET, { expiresIn: "7d" });
 
     setCookie(event, "auth_token", token, {
         httpOnly: true,
         sameSite: "strict",
         path: "/",
-        maxAge: 60 * 60, // 1 hour
+        maxAge: 60 * 60 * 24 * 7, // 7 days
     });
 
     return { success: true };

@@ -62,8 +62,6 @@ export class HederaService {
     }
 
     async initHashConnect() {
-        console.log("hello");
-
         //register events
         this.setUpHashConnectEvents();
 
@@ -77,6 +75,10 @@ export class HederaService {
 
         // return a boolean to check if we are connected
         return this.state;
+    }
+
+    async disconnectHashConnect() {
+        await this.hashconnect.disconnect();
     }
 
     setUpHashConnectEvents() {
@@ -94,6 +96,7 @@ export class HederaService {
     }
 
     isPaired() {
+        console.log(this.state);
         return this.state === HashConnectConnectionState.Connected || this.state === HashConnectConnectionState.Paired;
     }
 

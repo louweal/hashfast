@@ -16,5 +16,5 @@ const props = defineProps({
     },
 });
 
-const color2 = !props.color ? "#fff" : "#000";
+const color2 = props.color === "#000" ? "#fff" : "#000";
 </script>
