@@ -156,15 +156,29 @@ const triggerFileInput = () => {
 };
 
 const handleFileChange = async (event) => {
+    if (!event.target.files[0]) return;
+
+    if (event.target.files[0].size > 1024 * 40) {
+        alert("Image size must be less than 40KB");
+        return;
+    }
+
     imageFile.value = event.target.files[0];
+
     if (imageFile.value) {
         newLink.value.image = await imageFileToBase64(imageFile.value);
     }
 };
 
 const createLink = async () => {
+    if (newLink.value.currency === "*" && newLink.value.amount) {
+        alert("Please select a currency");
+        return;
+    }
+
     try {
         newLink.value.expires = newLink.value.expires ? new Date(newLink.value.expires) : null;
+        newLink.value.amount = newLink.value.amount ? Number(newLink.value.amount) : null;
         newLink.value.authorId = user.value.id;
 
         const response = await $fetch("/api/links", {

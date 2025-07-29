@@ -8,8 +8,7 @@
                     <div
                         class="card-link__circle__mask"
                         :style="{
-                            background: `conic-gradient(#daedd6 calc(${progress} * 1%),
-      transparent 0)`,
+                            //background: `conic-gradient(#daedd6 calc(${progress} * 1%),transparent 0)`,
                         }"
                     ></div>
                     <div class="card-link__circle__inner">
@@ -27,7 +26,9 @@
                     <span class="color-body/50 text-sm font-normal"> {{ memo }}<i v-if="!memo">No memo</i></span>
                 </div>
             </div>
-            <div class="md:col-span-2 hidden md:flex">{{ amount }} {{ currency ? currency.toUpperCase() : "" }}</div>
+            <div class="md:col-span-2 hidden md:flex">
+                {{ amount }} {{ currency !== "*" ? currency.toUpperCase() : "" }}
+            </div>
 
             <div class="md:col-span-2 hidden lg:flex">
                 {{ new Date(createdAt).toLocaleDateString("en-US") }}
@@ -45,7 +46,10 @@
                     expired
                 </div>
                 <div class="bg-accent/20 text-accent rounded-sm px-3 py-1 md:py-2 whitespace-nowrap" v-else>
-                    + {{ totalAmount }} {{ currency }}
+                    <div v-if="currency == '*'">receiving</div>
+                    <div v-else class="uppercase flex gap-2 items-center">
+                        + {{ totalAmount }} {{ currency }} <span v-if="isComplete"><IconCheck /></span>
+                    </div>
                 </div>
             </div>
             <div class="md:col-span-1 flex justify-end">
@@ -121,7 +125,7 @@ const props = defineProps({
         required: false,
     },
     maxPayments: {
-        type: [String, null],
+        type: [Number, null],
         required: false,
     },
     payments: {
@@ -146,28 +150,25 @@ const props = defineProps({
     },
 });
 
-const colorHash = (s) => [...s].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
-
-let progress = ref(0);
-
-if (props.maxPayments && props.payments) {
-    let numPayments = props.payments.length;
-    progress.value = (numPayments / props.maxPayments) * 100;
-} else {
-    progress.value = 100;
-}
+// const colorHash = (s) => [...s].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
 
 let state = "";
 let totalPayments = 0;
+let isComplete = props.maxPayments && props.payments.length >= props.maxPayments ? true : false;
 
 // map all payment transactionIds
 let paymentIds = props.payments.map((payment) => payment.transactionId);
-let totalAmount = await hederaService.getTotalTransactionAmount(paymentIds, props.accountId);
+
+const totalAmount = ref(0);
+
+if (props.currency != "*") {
+    totalAmount.value = await hederaService.getTotalTransactionAmount(paymentIds, props.accountId);
+}
 
 if (props.payments && props.payments.length > 0) {
     if (props.currency == "HBAR") {
         [...props.payments].map((payment) => {
-            hederaService.getTransactionAmount(payment.transactionId, props.accountId).then((amount) => {
+            hederaService.getTransactionData(payment.transactionId, props.accountId).amount.then((amount) => {
                 totalPayments += Number(amount);
             });
         });
@@ -201,23 +202,24 @@ function togglePanel() {
         display: flex;
         justify-content: center;
         align-items: center;
-        background: var(--gradient-primary);
+        /* background: var(--gradient-primary); */
+        background-color: var(--color-secondary);
+
         transform: scaleX(-1);
         padding: 0.75rem;
 
-        &__mask {
+        /* &__mask {
             position: absolute;
-            /* z-index: 2; */
             width: 100%;
             height: 100%;
             border-radius: 50em;
-        }
+        } */
 
         &__inner {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 3.375rem;
+            width: 3.375rem !important;
             height: 3.375rem;
             padding: 5px;
             border-radius: 50em;

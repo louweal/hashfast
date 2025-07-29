@@ -1,4 +1,4 @@
-import { Client, AccountId, PrivateKey, Hbar, TransferTransaction, AccountBalanceQuery } from "@hashgraph/sdk";
+import { Client, AccountId, Hbar, TransferTransaction, TokenId } from "@hashgraph/sdk";
 import type { Link } from "@prisma/client";
 import { HashConnect, HashConnectConnectionState } from "hashconnect";
 import type { SessionData } from "hashconnect";
@@ -18,20 +18,32 @@ interface TransactionRecord {
     memo: number;
 }
 
+interface TransactionData {
+    amount: number;
+    currency: string;
+    memo: string;
+    timestamp: string;
+}
+
 interface MirrorNodeResponse {
     transactions: TransactionRecord[];
 }
 
+type TokenMap = {
+    [key in Network]: string;
+};
+
 export class HederaService {
     private client: Client;
-    private network: String;
-    private networkUrl: String;
+    private network: string;
+    private networkUrl: string;
+    private usdcTokenId: string;
 
     private appMetadata = {
         name: "HashFast",
-        description: "HashFast",
-        icons: ["http://localhost:3000/favicon.ico"],
-        url: "http://localhost:3000/",
+        description: "HashFast Payments",
+        icons: ["https://hashpress.io/wp-content/uploads/2024/10/cropped-favicon-192x192.png"],
+        url: "https://hashpress.io",
     };
 
     private hashconnect: HashConnect;
@@ -46,10 +58,12 @@ export class HederaService {
             this.client = Client.forMainnet();
             this.network = "mainnet";
             this.networkUrl = "https://mainnet.mirrornode.hedera.com";
+            this.usdcTokenId = "0.0.456858";
         } else {
             this.client = Client.forTestnet();
             this.network = "testnet";
             this.networkUrl = "https://testnet.mirrornode.hedera.com";
+            this.usdcTokenId = "0.0.429274";
         }
 
         //create the hashconnect instance
@@ -69,9 +83,9 @@ export class HederaService {
         await this.hashconnect.init();
 
         //open pairing modal
-        this.hashconnect.openPairingModal();
-
-        console.log(this.state);
+        if (this.state === HashConnectConnectionState.Disconnected) {
+            this.hashconnect.openPairingModal("light", "#ff0000", "#000000", "#ffffff", "1px");
+        }
 
         // return a boolean to check if we are connected
         return this.state;
@@ -121,30 +135,48 @@ export class HederaService {
         }
 
         const data: MirrorNodeResponse = await res.json();
-        console.log(data.transactions[0]);
         return data.transactions[0];
     }
 
-    async getTransactionAmount(transactionId: string, receiverId: string): Promise<number> {
+    async getTransactionData(transactionId: string, receiverId: string): Promise<TransactionData> {
         let paymentData = await this.getAllTransactionData(transactionId);
-        let transfers = paymentData["transfers"];
 
         let amount = 0;
-        for (let i = 0; i < transfers.length; i++) {
-            if (transfers[i]["account"] == receiverId) {
-                amount = Number(transfers[i]["amount"]) / 100_000_000;
-                break;
+        let currency = "?";
+
+        let memo = atob(paymentData["memo_base64"]);
+        let timestamp = paymentData["consensus_timestamp"];
+        let transfers = paymentData["transfers"];
+        let tokenTransfers = paymentData["token_transfers"];
+
+        if (tokenTransfers.length > 0) {
+            currency = "USDC";
+            for (let i = 0; i < tokenTransfers.length; i++) {
+                // find the relevant token transfer
+                if (tokenTransfers[i]["token_id"] == this.usdcTokenId && tokenTransfers[i]["account"] == receiverId) {
+                    amount = tokenTransfers[i]["amount"] / 1e6;
+                    break;
+                }
+            }
+        } else if (transfers.length > 0) {
+            currency = "HBAR";
+            for (let i = 0; i < transfers.length; i++) {
+                // find the relevant token transfer
+                if (transfers[i]["account"] == receiverId) {
+                    amount = Number(transfers[i]["amount"]) / 100_000_000;
+                    break;
+                }
             }
         }
 
-        return amount;
+        return { amount, currency, memo, timestamp };
     }
 
     async getTotalTransactionAmount(paymentIds: string[], receiverId: string): Promise<number> {
         let amount = 0;
 
         for (let i = 0; i < paymentIds.length; i++) {
-            amount += await this.getTransactionAmount(paymentIds[i], receiverId);
+            amount += (await this.getTransactionData(paymentIds[i], receiverId)).amount;
         }
 
         return amount;
@@ -161,21 +193,63 @@ export class HederaService {
             throw new Error("Link does not have a currency");
         }
 
-        let initData = await this.initHashConnect();
+        const memo = link.memo ? link.memo : "";
 
-        console.log(initData);
+        console.log(this.state);
+
+        if (this.state !== HashConnectConnectionState.Connected && this.state !== HashConnectConnectionState.Paired) {
+            await this.initHashConnect();
+        }
+
+        if (!this.pairingData) return;
 
         const toAccount = AccountId.fromString(link.accountId);
+        const fromAccount = AccountId.fromString(this.pairingData.accountIds[0]); // assumes paired and takes first paired account id
+        const signer = this.hashconnect.getSigner(fromAccount as any);
 
         if (link.currency == "hbar") {
             const tinybarAmount = Number(link.amount) * 100_000_000;
 
-            console.log("to do hbar transfer");
-            return;
+            const transaction = await new TransferTransaction()
+                .addHbarTransfer(fromAccount, Hbar.fromTinybars(-1 * tinybarAmount)) //Sending account
+                .addHbarTransfer(toAccount, Hbar.fromTinybars(tinybarAmount)) //Receiving account
+                .setTransactionMemo(memo)
+                .freezeWithSigner(signer as any);
+
+            return await this.executeTransaction(transaction);
         }
 
         if (link.currency == "usdc") {
-            console.log("to do usdc transfer");
+            const scaledAmount = +link.amount * 1e6;
+            const usdcAmount = Number(scaledAmount);
+
+            const transaction = await new TransferTransaction()
+                .addTokenTransfer(TokenId.fromString(this.usdcTokenId), fromAccount, -usdcAmount) //Sending account
+                .addTokenTransfer(TokenId.fromString(this.usdcTokenId), toAccount, usdcAmount) //Receiving account
+                .setTransactionMemo(memo)
+                .freezeWithSigner(signer as any);
+
+            return await this.executeTransaction(transaction);
+        }
+
+        return { transactionId: null, receipt: null }; // failed, unknown currency
+    }
+
+    async executeTransaction(transaction: TransferTransaction) {
+        if (!this.pairingData) return;
+
+        const fromAccount = AccountId.fromString(this.pairingData.accountIds[0]); // assumes paired and takes first paired account id
+        const signer = this.hashconnect.getSigner(fromAccount as any);
+
+        try {
+            const response = await transaction.executeWithSigner(signer as any);
+            const transactionId = response.transactionId.toString();
+            const receipt = await response.getReceiptWithSigner(signer as any);
+            return { transactionId, receipt };
+        } catch (e) {
+            console.log(e);
+
+            return { transactionId: null, receipt: null };
         }
     }
 }

@@ -12,20 +12,20 @@
                     <QrCode :value="url" @change="onUrlChange" />
                 </div>
                 <div class="p-5 flex flex-col gap-4" v-if="link && baseLink">
-                    <h3 class="font-bold text-xl" v-if="link.amount && link.currency">
+                    <h3 class="font-bold text-xl" v-if="baseLink.amount && baseLink.currency">
                         To pay: {{ link.amount }} <span class="uppercase">{{ link.currency }}</span>
                     </h3>
                     <div v-else-if="!isQrUrl" class="grid grid-cols-2 sm:grid-cols-3 gap-4">
                         <input type="text" placeholder="Enter the amount" class="sm:col-span-2" v-model="link.amount" />
 
                         <input
-                            v-if="baseLink.currency && link.currency"
+                            v-if="baseLink.currency != '*' && link.currency"
                             type="text"
                             v-model="link.currency"
                             disabled
                             class="uppercase"
                         />
-                        <select v-else v-model="link.currency">
+                        <select v-else v-model="link.currency" default="hbar">
                             <option value="hbar">HBAR</option>
                             <option value="usdc">USDC</option>
                         </select>
@@ -55,7 +55,7 @@
                 </div>
                 <div v-else>No baseLink</div>
                 <div class="border-t border-t-body/15 p-5">
-                    <div class="flex">
+                    <div class="flex items-start">
                         <div class="flex flex-grow" v-if="receiver">
                             <ul>
                                 <li>
@@ -67,7 +67,7 @@
                             </ul>
                         </div>
                         <div
-                            v-if="!route.query.qr && !expired"
+                            v-if="!route.query.qr && !expired && numPayments < baseLink.maxPayments"
                             class="btn gap-3"
                             :class="{ 'btn--disabled': !link.amount }"
                             @click="link.amount ? handlePayment() : null"
@@ -75,6 +75,11 @@
                             <IconHedera class="-ml-3" />
                             <span>Pay<span class="hidden md:inline"> now</span></span>
                         </div>
+                        <span
+                            v-if="numPayments >= baseLink.maxPayments"
+                            class="bg-accent/20 text-accent rounded-sm px-3"
+                            >Fully paid</span
+                        >
                     </div>
                 </div>
             </div>
@@ -106,12 +111,14 @@ import { ref, onMounted } from "vue";
 const route = useRoute();
 const slug = computed(() => route.params.slug);
 
-console.log(route.params.slug);
 const { data: baseLink, error: linkError } = await useAsyncData("baseLink", () =>
     $fetch(`/api/links/${route.params.slug}`),
 );
 
 const hederaService = new HederaService();
+
+const numPayments = baseLink.value.payments ? baseLink.value.payments.length : 0;
+console.log("numPayments :>> ", numPayments);
 
 const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
 await fetchUser();
@@ -160,6 +167,10 @@ const link = ref({
     ...baseLink.value,
 });
 
+if (link.value.currency == "*") {
+    link.value.currency = "hbar";
+}
+
 const currencies = link.currency ? link.currency.toUpperCase() : "HBAR or USDC";
 
 let pageTitle = "HashFast";
@@ -187,7 +198,23 @@ const copyLink = async () => {
 
 const handlePayment = async () => {
     try {
-        await hederaService.sendPayment(link.value);
+        console.log(link.amount);
+        let { transactionId, receipt } = await hederaService.sendPayment(link.value);
+
+        // check if payment was successful
+        if (receipt.status._code == 22) {
+            // 22 = success
+            try {
+                const response = await $fetch("/api/payments", {
+                    method: "POST",
+                    body: { transactionId, linkId: link.value.id },
+                });
+            } catch (error) {
+                console.error("Failed to store payment:", error);
+            }
+        } else {
+            console.log(receipt);
+        }
     } catch (err) {
         console.error("Failed to send payment:", err);
     }

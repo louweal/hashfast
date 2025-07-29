@@ -15,7 +15,7 @@
                     <li @click="signOut" class="cursor-pointer whitespace-nowrap">Sign out</li>
 
                     <li class="btn btn--small btn--dark" @click="isPaired ? disconnect() : connect()">
-                        <IconHedera color="#fbda48" class="-ml-2 mr-2" /> {{ isPaired ? "Disconnect" : "Connect" }}
+                        {{ isPaired ? "Disconnect" : "Connect" }}
                     </li>
                 </ul>
             </nav>

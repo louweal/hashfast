@@ -6,10 +6,8 @@
         target="_blank"
         class="grid grid-cols-12 gap-5 items-center bg-background/70 p-5 border-b border-body/15"
     >
-        <div class="md:col-span-6 hidden md:block">{{ memo }}</div>
-        <div class="col-span-4 md:col-span-2">
-            {{ date.date }} <span class="hidden md:inline">{{ date.time }}</span>
-        </div>
+        <div class="md:col-span-5 hidden md:block">{{ memo }}</div>
+
         <div class="col-span-4 md:col-span-2 flex flex-start">
             <div
                 class="rounded-md px-3 py-1 md:py-2"
@@ -18,9 +16,12 @@
                 {{ payerAccountId }}
             </div>
         </div>
+        <div class="col-span-4 md:col-span-2">
+            {{ date.date }} <span class="hidden md:inline">{{ date.time }}</span>
+        </div>
         <div class="col-span-4 md:col-span-2 flex flex-start">
             <div class="bg-accent/20 text-accent rounded-sm px-3 py-1 md:py-2 whitespace-nowrap">
-                + {{ amount }} HBAR
+                + {{ amount }} {{ currency }}
             </div>
         </div>
     </a>
@@ -43,22 +44,16 @@ const props = defineProps({
     },
 });
 
+let payerAccountId = props.transactionId.split("@")[0]; // first part of transactionId
+
 const colorHash = (s) => [...s].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
 
-let paymentData = await hederaService.getAllTransactionData(props.transactionId);
+let transactionData = await hederaService.getTransactionData(props.transactionId, props.accountId);
 
-let encodedMemo = paymentData["memo_base64"];
-
-//decode memo
-let memo = atob(encodedMemo);
-
-let date = formatHederaTimestamp(paymentData["consensus_timestamp"]);
-
-// let transfers = paymentData["transfers"];
-
-let payerAccountId = props.transactionId.split("@")[0];
-
-let amount = await hederaService.getTransactionAmount(props.transactionId, props.accountId);
+let amount = parseFloat(transactionData.amount.toFixed(2));
+let currency = transactionData.currency;
+let date = formatHederaTimestamp(transactionData.timestamp);
+let memo = transactionData.memo;
 
 function formatHederaTimestamp(ts) {
     const [s, ns] = ts.split(".");

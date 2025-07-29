@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
 
     const link = await prisma.link.findUnique({
         where: { id },
+        include: { payments: true },
     });
 
     if (!link) {
