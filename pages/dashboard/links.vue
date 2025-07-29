@@ -11,7 +11,12 @@
                         <div class="btn" :class="{ 'btn--light': showAll }" @click="handleFilterActive">Active</div>
                     </div>
 
-                    <input v-model="searchText" type="text" class="!bg-white order-3 md:order-2" placeholder="Search" />
+                    <input
+                        v-model="searchText"
+                        type="text"
+                        class="!bg-white order-3 md:order-2"
+                        placeholder="Search links"
+                    />
 
                     <NuxtLink to="/create" class="btn gap-3 order-2 md:order-3">
                         <span class="flex justify-center items-center size-6 bg-black rounded-full -ml-3 text-primary"
@@ -33,9 +38,9 @@
                         </TransitionGroup>
                     </div>
 
-                    <div v-else>
-                        <h2 class="text-2xl text-body">No links found</h2>
-                        <p class="text-body">You don't have any links yet.</p>
+                    <div v-else class="flex flex-col gap-4">
+                        <h2 class="text-xl text-body">No links found</h2>
+                        <p class="text-body" v-if="showAll && searchText == ''">You don't have any links yet.</p>
                     </div>
                 </ClientOnly>
             </div>
@@ -115,12 +120,13 @@ const isActiveLink = function (link) {
 .list-move,
 .list-enter-active,
 .list-leave-active {
-    transition: all 0.3s cubic-bezier(0.2, 0, 0.2, 1);
+    transition: all 0.5s linear;
 }
 
 .list-enter-from,
 .list-leave-to {
     opacity: 0;
+    height: 0;
     /* transform: translateX(1px); */
 }
 

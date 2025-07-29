@@ -3,11 +3,15 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export default defineEventHandler(async (event) => {
-    const publicPaths = ["/", "/login", "/register", "/api/auth/me", "/api/auth/login"];
+    const publicPaths = ["/", "/login", "/register"];
 
     const url = getRequestURL(event).pathname;
 
     if (publicPaths.includes(url)) return;
+
+    if (url.startsWith("/link/view/")) {
+        return;
+    }
 
     if (event.path.startsWith("/api/links") && event.method === "GET") {
         return;
@@ -15,7 +19,9 @@ export default defineEventHandler(async (event) => {
     if (event.path.startsWith("/api/users") && event.method === "GET") {
         return;
     }
-    if (url.startsWith("/link/view/")) {
+
+    if (event.path.startsWith("/api/auth") && event.method === "GET") {
+        console.log("allow GET /api/auth");
         return;
     }
 

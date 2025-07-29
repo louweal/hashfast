@@ -23,6 +23,9 @@ export default defineEventHandler(async (event) => {
         });
 
         const { password: _omit, ...safeUser } = user;
+
+        console.log("created user", safeUser);
+
         return safeUser;
     } catch (err: any) {
         if (err instanceof z.ZodError) {

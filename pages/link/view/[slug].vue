@@ -1,5 +1,7 @@
 <template>
     <main class="min-h-dvh flex justify-center item-center">
+        <Header :gradient="true" v-if="user" />
+
         <div class="container flex flex-col justify-center items-center gap-4 w-full sm:w-md">
             <div class="bg-white border border-body/10 rounded-2xl relative pt-14 w-full">
                 <div class="card__header">
@@ -67,7 +69,13 @@
                             </ul>
                         </div>
                         <div
-                            v-if="!route.query.qr && !expired && numPayments < baseLink.maxPayments"
+                            v-if="
+                                !route.query.qr &&
+                                !expired &&
+                                ((baseLink.maxPayments && numPayments < baseLink.maxPayments) ||
+                                    !baseLink.maxPayments) &&
+                                !isPaid
+                            "
                             class="btn gap-3"
                             :class="{ 'btn--disabled': !link.amount }"
                             @click="link.amount ? handlePayment() : null"
@@ -76,18 +84,21 @@
                             <span>Pay<span class="hidden md:inline"> now</span></span>
                         </div>
                         <span
-                            v-if="numPayments >= baseLink.maxPayments"
+                            v-if="baseLink.maxPayments != null && numPayments >= baseLink.maxPayments && !isPaid"
                             class="bg-accent/20 text-accent rounded-sm px-3"
                             >Fully paid</span
                         >
+                        <span v-if="isPaid" class="bg-accent/20 text-accent rounded-2xl px-3">Payment received!</span>
                     </div>
                 </div>
             </div>
-            <p>or</p>
-            <NuxtLink v-if="route.query.qr" :to="route.path" class="btn btn--small btn--dark"
-                >Pay on this device</NuxtLink
-            >
-            <NuxtLink v-else :to="qrUrl" class="btn btn--small btn--dark">Pay with another device</NuxtLink>
+            <div class="flex flex-col gap-4 text-center" v-if="!isPaid">
+                <p>or</p>
+                <NuxtLink v-if="route.query.qr" :to="route.path" class="btn btn--small btn--dark"
+                    >Pay on this device</NuxtLink
+                >
+                <NuxtLink v-else :to="qrUrl" class="btn btn--small btn--dark">Pay with another device</NuxtLink>
+            </div>
         </div>
         <div class="bg-white shadow border-t absolute bottom-0 left-0 right-0 p-3" v-if="user">
             <div class="opacity-60 flex gap-2 mx-auto sm:w-md items-center">
@@ -110,6 +121,7 @@ import { ref, onMounted } from "vue";
 
 const route = useRoute();
 const slug = computed(() => route.params.slug);
+const isPaid = ref(false);
 
 const { data: baseLink, error: linkError } = await useAsyncData("baseLink", () =>
     $fetch(`/api/links/${route.params.slug}`),
@@ -134,7 +146,12 @@ if (error.value) {
 let url = ref("");
 
 // get url params
-const params = useRoute().query;
+const encodedParams = useRoute().query;
+
+let params = {};
+if (encodedParams && encodedParams.p) {
+    params = JSON.parse(atob(encodedParams.p));
+}
 
 onMounted(() => {
     if (typeof window !== "undefined") {
@@ -204,6 +221,8 @@ const handlePayment = async () => {
         // check if payment was successful
         if (receipt.status._code == 22) {
             // 22 = success
+
+            isPaid.value = true;
             try {
                 const response = await $fetch("/api/payments", {
                     method: "POST",

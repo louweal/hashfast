@@ -9,11 +9,18 @@ export default defineEventHandler(async (event) => {
     try {
         const links = await prisma.link.findMany({
             where: authorId ? { authorId } : undefined,
-            orderBy: { createdAt: "desc" }, // to do: order by last payment
-            include: { author: true, payments: true }, // join author info (optional)
+            orderBy: { createdAt: "desc" },
+            include: {
+                author: true,
+                payments: {
+                    orderBy: {
+                        createdAt: "desc",
+                    },
+                },
+            },
         });
 
-        return links; // Nuxt serialises to JSON
+        return links;
     } catch (e) {
         console.error(e);
         return createError({ statusCode: 400, message: "Link query failed" });

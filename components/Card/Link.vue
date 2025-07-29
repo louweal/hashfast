@@ -2,57 +2,73 @@
     <div
         class="card-link bg-white rounded-2xl shadow-sm hover:bg-background border border-body/10 transition-colors cursor-pointer"
     >
-        <div class="grid md:grid-cols-12 gap-5 items-center flex-start relative p-5" @click="togglePanel">
-            <div class="md:col-span-7 lg:col-span-5 flex items-center gap-4">
+        <div class="grid grid-cols-3 lg:grid-cols-12 gap-5 items-center flex-start relative p-5" @click="togglePanel">
+            <div
+                class="col-span-3 lg:col-span-5 flex items-center gap-4 border-b border-body/15 pb-5 lg:pb-0 lg:border-none"
+            >
                 <div class="card-link__circle">
-                    <div
-                        class="card-link__circle__mask"
-                        :style="{
-                            //background: `conic-gradient(#daedd6 calc(${progress} * 1%),transparent 0)`,
-                        }"
-                    ></div>
                     <div class="card-link__circle__inner">
                         <img v-if="image" className="" :src="image" width="60" height="60" />
                         <div v-else>
                             <IconFlash />
                         </div>
                     </div>
+                    <div
+                        class="absolute -bottom-1 bg-primary rounded-2xl text-xs p-1 px-2 text-[#816a37]"
+                        v-if="amount != null || currency != '*'"
+                    >
+                        {{ amount }} {{ currency !== "*" ? currency.toUpperCase() : "" }}
+                    </div>
                 </div>
                 <div class="flex flex-col">
-                    <h3 class="color-body opacity-50 font-regular text-lg">
+                    <h3 class="color-body font-regular text-lg">
                         {{ name }}
                         <i v-if="!name">No description</i>
                     </h3>
-                    <span class="color-body/50 text-sm font-normal"> {{ memo }}<i v-if="!memo">No memo</i></span>
+                    <span class="color-body/50 text-sm font-normal">
+                        <span v-if="memo"
+                            >Memo: <span class="opacity-50">{{ memo }}</span></span
+                        >
+                        <i v-if="!memo" class="opacity-15">No memo</i></span
+                    >
                 </div>
             </div>
-            <div class="md:col-span-2 hidden md:flex">
-                {{ amount }} {{ currency !== "*" ? currency.toUpperCase() : "" }}
+            <div class="lg:col-span-2 flex flex-start">
+                <span
+                    class="flex items-center gap-2 rounded-sm px-3 py-1 lg:py-2 whitespace-nowrap"
+                    :class="{
+                        'bg-body/20 text-body': payments.length === 0 && !isComplete,
+                        'bg-accent/20 text-accent': isComplete,
+                        'bg-primary/20 text-primary': payments.length !== 0 && !isComplete,
+                    }"
+                >
+                    <span class="font-bold flex gap-1">
+                        <span>{{ payments.length }}</span>
+                        <span v-if="maxPayments" class="font-normal">/</span>
+                        <span class="font-normal" v-if="maxPayments">{{ maxPayments }}</span>
+                    </span>
+                </span>
             </div>
 
-            <div class="md:col-span-2 hidden lg:flex">
-                {{ new Date(createdAt).toLocaleDateString("en-US") }}
-            </div>
-            <!-- <div class="md:col-span-2 lg:col-span-2 hidden lg:flex items-center gap-2">
-                <div class="rounded-md px-3 py-2" :style="`background-color: hsl(${colorHash(accountId)}, 50%, 90%)`">
-                    {{ accountId }}
+            <div class="lg:col-span-2">
+                <div>{{ new Date(createdAt).toLocaleDateString("en-US") }}</div>
+                <div v-if="expires" class="text-sm opacity-40">
+                    Expires: {{ new Date(expires).toLocaleDateString("en-US") }}
                 </div>
-            </div> -->
-            <div class="md:col-span-2 flex flex-start absolute top-5 right-5 md:relative md:right-auto md:top-auto">
-                <div class="bg-primary/20 text-primary rounded-md px-3 py-1 md:py-2" v-if="state == 'waiting'">
+            </div>
+            <div class="lg:col-span-2 flex flex-col items-end">
+                <div class="bg-primary/20 text-primary rounded-md px-3 py-1 lg:py-2" v-if="state == 'waiting'">
                     waiting
                 </div>
-                <div class="bg-body/20 text-body rounded-sm px-3 py-1 md:py-2" v-else-if="state == 'expired'">
+                <div class="bg-body/20 text-body rounded-sm px-3 py-1 lg:py-2" v-else-if="state == 'expired'">
                     expired
                 </div>
-                <div class="bg-accent/20 text-accent rounded-sm px-3 py-1 md:py-2 whitespace-nowrap" v-else>
-                    <div v-if="currency == '*'">receiving</div>
-                    <div v-else class="uppercase flex gap-2 items-center">
-                        + {{ totalAmount }} {{ currency }} <span v-if="isComplete"><IconCheck /></span>
-                    </div>
+                <div class="bg-accent/20 text-accent rounded-sm px-3 py-1 lg:py-2 whitespace-nowrap" v-else>
+                    <div v-if="currency == '*'">active</div>
+                    <div v-else class="uppercase flex gap-2 items-center">+ {{ totalAmount }} {{ currency }}</div>
                 </div>
             </div>
-            <div class="md:col-span-1 flex justify-end">
+            <div class="lg:col-span-1 absolute flex justify-end top-10 right-5 lg:relative lg:top-auto lg:right-auto">
                 <IconChevronDown :class="{ 'rotate-180': showPanel }" class="transform transition-transform" />
             </div>
         </div>
@@ -65,9 +81,6 @@
                         :="payment"
                         :accountId="accountId"
                     />
-                    <!-- <div class="absolute bottom-4 left-0 right-0 flex justify-center" v-if="payments.length > 2">
-                        <div class="animate-bounce"><IconChevronDown /></div>
-                    </div> -->
                 </div>
 
                 <div class="flex gap-5 p-5">
@@ -76,14 +89,10 @@
                         <NuxtLink :to="`/link/view/${id}`" xxxtarget="_blank" class="opacity-50 flex gap-1 items-center"
                             ><IconLink /> Link</NuxtLink
                         >
-                        <NuxtLink
-                            :to="`/link/view/${id}?qr=true`"
-                            xxxtarget="_blank"
-                            class="opacity-50 flex gap-1 items-center"
+                        <NuxtLink :to="`/link/view/${id}?qr=true`" class="opacity-50 flex gap-1 items-center"
                             ><IconQR /> QR</NuxtLink
                         >
                     </div>
-                    <!-- <div v-else class="flex flex-grow">Create link</div> -->
                     <div class="flex">
                         <div class="cursor-pointer" @click="handleDelete(id)"><IconTrash /></div>
                     </div>
@@ -150,38 +159,22 @@ const props = defineProps({
     },
 });
 
-// const colorHash = (s) => [...s].reduce((h, c) => h + c.charCodeAt(0), 0) % 360;
-
-let state = "";
-let totalPayments = 0;
-let isComplete = props.maxPayments && props.payments.length >= props.maxPayments ? true : false;
+const totalAmount = ref(0);
+const state = ref("waiting");
+const isComplete = props.maxPayments != null && props.payments.length >= props.maxPayments ? ref(true) : ref(false);
 
 // map all payment transactionIds
 let paymentIds = props.payments.map((payment) => payment.transactionId);
 
-const totalAmount = ref(0);
+totalAmount.value = await hederaService.getTotalTransactionAmount(paymentIds, props.accountId);
 
-if (props.currency != "*") {
-    totalAmount.value = await hederaService.getTotalTransactionAmount(paymentIds, props.accountId);
-}
-
-if (props.payments && props.payments.length > 0) {
-    if (props.currency == "HBAR") {
-        [...props.payments].map((payment) => {
-            hederaService.getTransactionData(payment.transactionId, props.accountId).amount.then((amount) => {
-                totalPayments += Number(amount);
-            });
-        });
-    } else {
-        totalPayments = -1;
-    }
-} else {
-    state = "waiting";
+if (totalAmount.value > 0) {
+    state.value = "active";
 }
 
 if (props.expires) {
     if (new Date(props.expires) < new Date()) {
-        state = "expired";
+        state.value = "expired";
     }
 }
 
@@ -196,35 +189,20 @@ function togglePanel() {
 .card-link {
     &__circle {
         position: relative;
-        width: 3.75rem;
-        height: 3.75rem;
+        width: 4rem;
+        height: 4rem;
         border-radius: 50em;
         display: flex;
         justify-content: center;
         align-items: center;
-        /* background: var(--gradient-primary); */
         background-color: var(--color-secondary);
-
-        transform: scaleX(-1);
         padding: 0.75rem;
-
-        /* &__mask {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50em;
-        } */
 
         &__inner {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 3.375rem !important;
-            height: 3.375rem;
             padding: 5px;
-            border-radius: 50em;
-            background-color: var(--color-secondary);
-            transform: scaleX(-1);
         }
     }
 }

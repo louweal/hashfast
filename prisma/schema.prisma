@@ -40,4 +40,5 @@ model Payment {
   linkId          String
   link            Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
   @@index([linkId])           // (optional) speeds up queries by link
+  createdAt        DateTime @default(now())
 }

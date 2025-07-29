@@ -68,7 +68,7 @@
                             </div>
                             <div class="flex flex-col gap-1">
                                 <h4>Max. payments</h4>
-                                <input type="number" v-model="newLink.maxPayments" />
+                                <input type="number" v-model="newLink.maxPayments" min="1" />
                             </div>
                         </div>
                     </div>
@@ -179,6 +179,7 @@ const createLink = async () => {
     try {
         newLink.value.expires = newLink.value.expires ? new Date(newLink.value.expires) : null;
         newLink.value.amount = newLink.value.amount ? Number(newLink.value.amount) : null;
+        newLink.value.maxPayments = newLink.value.maxPayments ? Number(newLink.value.maxPayments) : null;
         newLink.value.authorId = user.value.id;
 
         const response = await $fetch("/api/links", {

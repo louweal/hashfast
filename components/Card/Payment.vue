@@ -4,9 +4,10 @@
             transactionId,
         )}`"
         target="_blank"
+        title="Inspect"
         class="grid grid-cols-12 gap-5 items-center bg-background/70 p-5 border-b border-body/15"
     >
-        <div class="md:col-span-5 hidden md:block">{{ memo }}</div>
+        <div class="md:col-span-5 hidden md:block">{{ memo }} <i v-if="!memo" class="opacity-15">No memo</i></div>
 
         <div class="col-span-4 md:col-span-2 flex flex-start">
             <div
@@ -19,7 +20,7 @@
         <div class="col-span-4 md:col-span-2">
             {{ date.date }} <span class="hidden md:inline">{{ date.time }}</span>
         </div>
-        <div class="col-span-4 md:col-span-2 flex flex-start">
+        <div class="col-span-4 md:col-span-2 flex justify-end">
             <div class="bg-accent/20 text-accent rounded-sm px-3 py-1 md:py-2 whitespace-nowrap">
                 + {{ amount }} {{ currency }}
             </div>

@@ -104,6 +104,8 @@
 </template>
 
 <script setup>
+import { tr } from "zod/v4/locales";
+
 const showCreateForm = ref(true);
 const showDetailsForm = ref(false);
 const creating = ref(false);
@@ -128,22 +130,24 @@ const createUser = async () => {
         // check password and password2 match
         if (newUser.value.password !== newUser.value.password2) {
             error.value = "Passwords do not match";
-
             throw new Error("Passwords do not match");
         }
 
-        const response = await $fetch("/api/users", {
-            method: "POST",
-            body: newUser.value,
-        });
+        try {
+            const response = await $fetch("/api/users", {
+                method: "POST",
+                body: newUser.value,
+            });
 
-        userId = response.id;
+            userId = response.id;
 
-        // Reset form and refresh data
-        newUser.value = { email: "", password: "", password2: "" };
-        showCreateForm.value = false;
-        showDetailsForm.value = true;
-        // await refresh();
+            // Reset form and refresh data
+            newUser.value = { email: "", password: "", password2: "" };
+            showCreateForm.value = false;
+            showDetailsForm.value = true;
+        } catch (error) {
+            console.error("Failed to create user:", error);
+        }
     } catch (error) {
         console.error("Failed to create user:", error);
     } finally {

@@ -172,7 +172,9 @@ const createLink = async () => {
 
         let viewPath = route.path.replace("/params/", "/view/");
 
-        linkWithParams.value = viewPath + "?" + new URLSearchParams(newDetails.value).toString();
+        let encodedUrlParams = btoa(JSON.stringify(newDetails.value));
+
+        linkWithParams.value = viewPath + "?p=" + encodedUrlParams;
         showForm.value = false;
     } catch (error) {
         console.error("Failed to create link:", error);
