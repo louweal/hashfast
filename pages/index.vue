@@ -4,7 +4,11 @@
 
         <Hero-Home />
 
-        <Footer />
+        <!-- <section class="section">
+            <div class="container">this is a section</div>
+        </section> -->
+
+        <!-- <Footer /> -->
     </main>
 </template>
 

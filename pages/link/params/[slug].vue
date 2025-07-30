@@ -141,7 +141,6 @@ const newDetails = ref({});
 
 const { data: baseLink } = await useAsyncData("baseLink", () => $fetch(`/api/links/${route.params.slug}`));
 
-console.log(baseLink);
 // deep copy baselink to link
 const link = ref({
     ...baseLink.value,
@@ -168,8 +167,6 @@ const createLink = async () => {
             }
         }
 
-        console.log(newDetails.value);
-
         let viewPath = route.path.replace("/params/", "/view/");
 
         let encodedUrlParams = btoa(JSON.stringify(newDetails.value));
@@ -188,8 +185,6 @@ function handleCopyClick(event) {
 
 const copyLink = async () => {
     try {
-        console.log(domainUrl.value);
-
         await navigator.clipboard.writeText(domainUrl.value + linkWithParams.value);
         copied.value = true;
 

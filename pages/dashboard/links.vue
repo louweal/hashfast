@@ -62,10 +62,10 @@ const allLinks = ref([]);
 const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
 await fetchUser();
 
-if (user) {
+if (user.value && user.value.id) {
     try {
         allLinks.value = await $fetch("/api/links", {
-            query: { authorId: user.id }, // filtered
+            query: { authorId: user.value.id }, // filtered
         });
     } catch (error) {
         console.error("Failed to fetch links:", error);
@@ -112,11 +112,6 @@ const isActiveLink = function (link) {
 </script>
 
 <style scoped>
-.section {
-    padding-top: var(--header-height);
-    padding-bottom: 4rem;
-}
-
 .list-move,
 .list-enter-active,
 .list-leave-active {

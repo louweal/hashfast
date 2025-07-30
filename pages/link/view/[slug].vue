@@ -2,7 +2,10 @@
     <main class="min-h-dvh flex justify-center item-center">
         <Header :gradient="true" v-if="user" />
 
-        <div class="container flex flex-col justify-center items-center gap-4 w-full sm:w-md">
+        <div
+            class="container flex flex-col justify-center items-center gap-4 w-full sm:w-md"
+            :class="{ 'py-40': user }"
+        >
             <div class="bg-white border border-body/10 rounded-2xl relative pt-14 w-full">
                 <div class="card__header">
                     <img v-if="link.image" :src="link.image" width="60" height="60" />
@@ -100,7 +103,7 @@
                 <NuxtLink v-else :to="qrUrl" class="btn btn--small btn--dark">Pay with another device</NuxtLink>
             </div>
         </div>
-        <div class="bg-white shadow border-t absolute bottom-0 left-0 right-0 p-3" v-if="user">
+        <div class="bg-white shadow border-t fixed bottom-0 left-0 right-0 p-3" v-if="user">
             <div class="opacity-60 flex gap-2 mx-auto sm:w-md items-center">
                 <p class="flex flex-grow gap-2 items-center cursor-pointer" @click="copyLink">
                     {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
@@ -130,7 +133,6 @@ const { data: baseLink, error: linkError } = await useAsyncData("baseLink", () =
 const hederaService = new HederaService();
 
 const numPayments = baseLink.value.payments ? baseLink.value.payments.length : 0;
-console.log("numPayments :>> ", numPayments);
 
 const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
 await fetchUser();
@@ -215,7 +217,6 @@ const copyLink = async () => {
 
 const handlePayment = async () => {
     try {
-        console.log(link.amount);
         let { transactionId, receipt } = await hederaService.sendPayment(link.value);
 
         // check if payment was successful

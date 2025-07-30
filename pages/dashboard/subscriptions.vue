@@ -18,10 +18,3 @@
 const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
 await fetchUser();
 </script>
-
-<style>
-.section {
-    padding-top: var(--header-height);
-    padding-bottom: 4rem;
-}
-</style>

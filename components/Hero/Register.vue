@@ -1,20 +1,21 @@
 <template>
-    <div class="hero relative h-dvh">
-        <Sparkles />
+    <div class="hero relative h-dvh hero--center">
+        <div class="hero__bg"></div>
         <div class="container z-[2]">
             <div class="grid md:grid-cols-12 gap-5 items-center">
-                <div class="md:col-span-5 md:col-start-2 flex flex-col gap-4 text-white">
+                <div class="md:col-span-5 md:col-start-2 flex flex-col gap-4 text-white md:translate-[-30px]">
                     <NuxtLink to="/" class="flex gap-[10px] items-center text-[18px]">
                         <IconArrowLeft />
                         Back
                     </NuxtLink>
 
                     <div class="flex-col gap-4 hidden md:flex">
-                        <h1 class="text-[38px] font-semibold">Make payments easier for everyone with HashFast</h1>
-
-                        <p>text</p>
-
-                        <div class="btn self-start">Test</div>
+                        <h1 class="text-[38px] font-semibold">
+                            Make payments easier for everyone with
+                            <span class="bg-[#138462] inline-block transform rotate-[-1deg] px-4 rounded-md"
+                                ><Logo
+                            /></span>
+                        </h1>
                     </div>
                 </div>
                 <div class="md:col-span-5">
@@ -30,7 +31,7 @@
                                         id="email"
                                         required
                                         class=""
-                                        placeholder="user@example.com"
+                                        placeholder="your@email.com"
                                     />
                                 </div>
                                 <div class="flex flex-col gap-2">
@@ -104,8 +105,6 @@
 </template>
 
 <script setup>
-import { tr } from "zod/v4/locales";
-
 const showCreateForm = ref(true);
 const showDetailsForm = ref(false);
 const creating = ref(false);

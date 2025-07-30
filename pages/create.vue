@@ -177,16 +177,17 @@ const createLink = async () => {
     }
 
     try {
-        newLink.value.expires = newLink.value.expires ? new Date(newLink.value.expires) : null;
+        const expirationDate = newLink.value.expires ? new Date(newLink.value.expires) : null;
         newLink.value.amount = newLink.value.amount ? Number(newLink.value.amount) : null;
         newLink.value.maxPayments = newLink.value.maxPayments ? Number(newLink.value.maxPayments) : null;
         newLink.value.authorId = user.value.id;
 
+        const bodyPayload = { ...newLink.value, expires: expirationDate };
+
         const response = await $fetch("/api/links", {
             method: "POST",
-            body: newLink.value,
+            body: bodyPayload,
         });
-        console.log(response);
 
         // go to page dashboard/links
         navigateTo("/dashboard/links");

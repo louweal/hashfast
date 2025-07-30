@@ -14,7 +14,7 @@
                         </div>
                     </div>
                     <div
-                        class="absolute -bottom-1 bg-primary rounded-2xl text-xs p-1 px-2 text-[#816a37]"
+                        class="absolute -bottom-2 bg-primary rounded-2xl text-xs p-1 px-2 text-[#816a37]"
                         v-if="amount != null || currency != '*'"
                     >
                         {{ amount }} {{ currency !== "*" ? currency.toUpperCase() : "" }}

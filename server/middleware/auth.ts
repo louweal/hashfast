@@ -3,32 +3,29 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET as string;
 
 export default defineEventHandler(async (event) => {
-    const publicPaths = ["/", "/login", "/register"];
-
     const url = getRequestURL(event).pathname;
+    const method = event.method;
 
-    if (publicPaths.includes(url)) return;
+    const publicRoutes = [
+        { path: "/", method: "ANY" },
+        { path: "/login", method: "ANY" },
+        { path: "/register", method: "ANY" },
+        { pathPrefix: "/link/view/", method: "ANY" },
+        { pathPrefix: "/api/auth", method: "ANY" },
+        { pathPrefix: "/api/users", method: "ANY" },
+        { regex: /^\/api\/links\/[^/]+$/, method: "GET" }, // Allow GET /api/links/:id
+    ];
 
-    if (url.startsWith("/link/view/")) {
-        return;
-    }
-
-    if (event.path.startsWith("/api/links") && event.method === "GET") {
-        return;
-    }
-    if (event.path.startsWith("/api/users") && event.method === "GET") {
-        return;
-    }
-
-    if (event.path.startsWith("/api/auth") && event.method === "GET") {
-        console.log("allow GET /api/auth");
-        return;
-    }
+    const isPublic = publicRoutes.some(({ path, pathPrefix, regex, method: allowedMethod }) => {
+        const matchPath =
+            (path && url === path) || (pathPrefix && url.startsWith(pathPrefix)) || (regex && regex.test(url));
+        const matchMethod = allowedMethod === "ANY" || allowedMethod === method;
+        return matchPath && matchMethod;
+    });
+    if (isPublic) return;
 
     const token = getCookie(event, "auth_token");
     if (!token) {
-        // throw createError({ statusCode: 401, message: "Unauthorized!" });
-
         return sendRedirect(event, "/login", 302);
     }
 

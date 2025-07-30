@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware(async (to) => {
-    console.log("🚀 Global middleware running");
+    // console.log("🚀 Global middleware running");
 
     const publicPages = ["/", "/login", "/register", "/api/auth/me"];
 
@@ -8,8 +8,6 @@ export default defineNuxtRouteMiddleware(async (to) => {
     if (to.path.startsWith("/link/view/")) {
         return;
     }
-
-    console.log("block! " + to.path);
 
     try {
         const { data } = await useFetch("/api/auth/me", {
