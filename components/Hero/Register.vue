@@ -80,7 +80,7 @@
                                             placeholder="0.0.1234567"
                                             required
                                         />
-                                        <button class="btn btn--dark btn--square">Detect</button>
+                                        <!-- <button class="btn btn--dark btn--square">Detect</button> -->
                                     </div>
                                 </div>
                                 <div v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</div>

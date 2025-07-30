@@ -15,6 +15,7 @@ model User {
   wallet       String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  lastLogin    DateTime?
   links        Link[]
 }
 

@@ -7,8 +7,6 @@
                 <DashboardNav :active="'subscriptions'" />
 
                 <p>Coming soon</p>
-
-                <h1 v-if="isLoggedIn">Welcome, {{ user.name }} {{ user.wallet }}</h1>
             </div>
         </section>
     </main>

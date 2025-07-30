@@ -9,8 +9,8 @@
                 <div class="card__header card__header--interactive" @click="triggerFileInput">
                     <div>
                         <img v-if="imageFile" class="" :src="imageUrl" width="50" height="50" title="Upload icon" />
-                        <div v-else>
-                            <p>Upload icon</p>
+                        <div v-else class="text-center text-lg opacity-50">
+                            <p>Upload<br />icon</p>
                         </div>
                     </div>
 
@@ -56,19 +56,19 @@
                             :class="{ 'opacity-100 h-auto visible': showOptionalFields }"
                         >
                             <div class="pt-4 flex flex-col gap-1">
-                                <h4>Memo (public)</h4>
+                                <h4>Memo (public) <span class="opacity-50">(optional)</span></h4>
                                 <div>
                                     <input type="text" v-model="newLink.memo" />
                                 </div>
                             </div>
 
                             <div class="flex flex-col gap-1">
-                                <h4>Expiration date</h4>
-                                <input type="date" v-model="newLink.expires" />
+                                <h4>Expiration date <span class="opacity-50">(optional)</span></h4>
+                                <input type="date" v-model="newLink.expires" placeholder="No expiration" />
                             </div>
                             <div class="flex flex-col gap-1">
-                                <h4>Max. payments</h4>
-                                <input type="number" v-model="newLink.maxPayments" min="1" />
+                                <h4>Number of payments</h4>
+                                <input type="number" v-model="newLink.maxPayments" min="1" placeholder="Unlimited" />
                             </div>
                         </div>
                     </div>
@@ -76,14 +76,14 @@
                 <div class="border-t border-t-body/15 p-5">
                     <div class="flex items-center justify-end">
                         <div class="flex flex-grow">
-                            <ul>
+                            <!-- <ul>
                                 <li>
                                     To: <span class="opacity-50">{{ username }}</span>
                                 </li>
                                 <li>
                                     Wallet: <span class="opacity-50">{{ newLink.accountId }}</span>
                                 </li>
-                            </ul>
+                            </ul> -->
                         </div>
                         <button type="submit" class="btn gap-3"><span>Save</span></button>
                     </div>

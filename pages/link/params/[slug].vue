@@ -57,12 +57,13 @@
                             <div class="pt-4 flex flex-col gap-1">
                                 <h4>Memo (public)</h4>
                                 <div>
-                                    <input type="text" v-model="link.memo" />
+                                    <input type="text" name="memo" v-model="link.memo" />
                                 </div>
                             </div>
                             <div class="flex flex-col gap-1">
                                 <h4>Expiration date</h4>
-                                <input type="date" v-model="link.expires" />
+
+                                <input type="date" name="expires" :value="formattedDate" @input="onDateInput" />
                             </div>
                         </div>
                     </div>
@@ -70,14 +71,14 @@
                 <div class="border-t border-t-body/15 p-5">
                     <div class="flex items-center justify-end">
                         <div class="flex flex-grow">
-                            <ul>
+                            <!-- <ul>
                                 <li>
                                     To: <span class="opacity-50">{{ username }}</span>
                                 </li>
                                 <li>
                                     Wallet: <span class="opacity-50">{{ link.accountId }}</span>
                                 </li>
-                            </ul>
+                            </ul> -->
                         </div>
                         <button type="submit" class="btn gap-3">
                             <span>Next</span> <ChevronDown class="-rotate-90" color="#816a37" />
@@ -136,7 +137,7 @@ const showOptionalFields = ref(false);
 const showForm = ref(true);
 const linkWithParams = ref(null);
 const copied = ref(false);
-const domainUrl = ref(window.location.origin);
+const domainUrl = window ? ref(window.location.origin) : null; // to do
 const newDetails = ref({});
 
 const { data: baseLink } = await useAsyncData("baseLink", () => $fetch(`/api/links/${route.params.slug}`));
@@ -148,6 +149,15 @@ const link = ref({
 
 if (user) {
     username.value = user.value.name;
+}
+
+const formattedDate = computed(() => {
+    return link.value.expires ? link.value.expires.substring(0, 10) : "";
+});
+
+function onDateInput(e) {
+    const input = e.target;
+    link.value.expires = input.value ? new Date(input.value) : null;
 }
 
 const goBack = () => {
@@ -165,6 +175,11 @@ const createLink = async () => {
             if (value !== link.value[key]) {
                 newDetails.value[key] = link.value[key];
             }
+        }
+
+        // check newDetails is not empty
+        if (Object.keys(newDetails.value).length === 0) {
+            return;
         }
 
         let viewPath = route.path.replace("/params/", "/view/");

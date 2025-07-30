@@ -18,6 +18,13 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 401, message: "Invalid credentials" });
     }
 
+    await prisma.user.update({
+        where: { email },
+        data: {
+            lastLogin: new Date(),
+        },
+    });
+
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
         throw createError({ statusCode: 401, message: "Invalid credentials" });

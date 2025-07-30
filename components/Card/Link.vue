@@ -1,6 +1,6 @@
 <template>
     <div
-        class="card-link bg-white rounded-2xl shadow-sm hover:bg-background border border-body/10 transition-colors cursor-pointer"
+        class="card-link bg-white rounded-2xl shadow-sm hover:shadow-[1px_1px_7px_rgba(30,30,30,0.2)] border border-body/10 transition-shadow duration-300 cursor-pointer"
     >
         <div class="grid grid-cols-3 lg:grid-cols-12 gap-5 items-center flex-start relative p-5" @click="togglePanel">
             <div
@@ -14,7 +14,7 @@
                         </div>
                     </div>
                     <div
-                        class="absolute -bottom-2 bg-primary rounded-2xl text-xs p-1 px-2 text-[#816a37]"
+                        class="absolute -bottom-2 bg-primary rounded-2xl text-xs p-1 px-2 text-[#816a37] text-center whitespace-nowrap"
                         v-if="amount != null || currency != '*'"
                     >
                         {{ amount }} {{ currency !== "*" ? currency.toUpperCase() : "" }}
@@ -35,13 +35,19 @@
             </div>
             <div class="lg:col-span-2 flex flex-start">
                 <span
-                    class="flex items-center gap-2 rounded-sm px-3 py-1 lg:py-2 whitespace-nowrap"
+                    v-if="getColor(maxPayments, payments.length) !== 'body'"
+                    class="relative flex items-center gap-2 rounded-sm px-3 py-1 lg:py-2 whitespace-nowrap"
                     :class="{
-                        'bg-body/20 text-body': payments.length === 0 && !isComplete,
-                        'bg-accent/20 text-accent': isComplete,
-                        'bg-primary/20 text-primary': payments.length !== 0 && !isComplete,
+                        'bg-primary/20 text-primary': getColor(maxPayments, payments.length) === 'primary', // yellow
+                        'bg-accent/20 text-accent': getColor(maxPayments, payments.length) === 'accent', // green
                     }"
                 >
+                    <div
+                        v-if="numNewPayments > 0"
+                        class="absolute bg-accent text-white leading-none rounded-full top-[-8px] right-[-8px] size-[16px] flex items-center justify-center text-xs"
+                    >
+                        {{ numNewPayments }}
+                    </div>
                     <span class="font-bold flex gap-1">
                         <span>{{ payments.length }}</span>
                         <span v-if="maxPayments" class="font-normal">/</span>
@@ -85,12 +91,8 @@
 
                 <div class="flex gap-5 p-5">
                     <div class="flex flex-grow items-center gap-2">
-                        Share:
-                        <NuxtLink :to="`/link/view/${id}`" xxxtarget="_blank" class="opacity-50 flex gap-1 items-center"
-                            ><IconLink /> Link</NuxtLink
-                        >
-                        <NuxtLink :to="`/link/view/${id}?qr=true`" class="opacity-50 flex gap-1 items-center"
-                            ><IconQR /> QR</NuxtLink
+                        <NuxtLink :to="`/link/share/${id}`" xxxtarget="_blank" class="flex gap-1 items-center"
+                            ><IconLink />Share</NuxtLink
                         >
                     </div>
                     <div class="flex">
@@ -157,11 +159,29 @@ const props = defineProps({
         type: Function,
         required: true,
     },
+    lastLogin: {
+        type: String,
+        required: true,
+    },
 });
 
 const totalAmount = ref(0);
 const state = ref("waiting");
-const isComplete = props.maxPayments != null && props.payments.length >= props.maxPayments ? ref(true) : ref(false);
+// const isComplete = props.maxPayments != null && props.payments.length >= props.maxPayments ? ref(true) : ref(false);
+const numNewPayments = ref(0);
+
+const getColor = function (maxPayments, numPayments) {
+    if (maxPayments != null && numPayments >= maxPayments) {
+        return "accent"; //green
+    }
+    if (numPayments > 0 && maxPayments == null) {
+        return "accent"; // green
+    }
+    if (numPayments > 0) {
+        return "primary"; //yellow
+    }
+    return "body";
+};
 
 // map all payment transactionIds
 let paymentIds = props.payments.map((payment) => payment.transactionId);
@@ -172,10 +192,24 @@ if (totalAmount.value > 0) {
     state.value = "active";
 }
 
+const isExpired = (date) => {
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+    const dateStr = date.split("T")[0];
+
+    return dateStr < todayStr;
+};
+
 if (props.expires) {
-    if (new Date(props.expires) < new Date()) {
+    if (isExpired(props.expires)) {
         state.value = "expired";
     }
+}
+
+if (props.payments.length > 0) {
+    numNewPayments.value = props.payments.filter((payment) => payment.createdAt > props.lastLogin).length;
+
+    console.log(numNewPayments.value);
 }
 
 const showPanel = ref(false);

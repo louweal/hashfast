@@ -51,7 +51,7 @@
                         <p class="opacity-50">{{ link.memo }}</p>
                     </div>
                     <div v-if="link.expires">
-                        <h4>Pay before:</h4>
+                        <h4>Payment due date:</h4>
                         <div class="flex justify-between gap-3 items-center">
                             <p class="opacity-50">{{ new Date(link.expires).toLocaleDateString("en-US") }}</p>
                             <span v-if="expired" class="bg-body/20 text-body rounded-sm px-3">expired</span>
@@ -62,7 +62,7 @@
                 <div class="border-t border-t-body/15 p-5">
                     <div class="flex items-start">
                         <div class="flex flex-grow" v-if="receiver">
-                            <ul>
+                            <ul v-if="user.wallet != receiver.wallet">
                                 <li>
                                     To: <span class="opacity-50">{{ receiver.name }}</span>
                                 </li>
@@ -148,7 +148,7 @@ if (error.value) {
 let url = ref("");
 
 // get url params
-const encodedParams = useRoute().query;
+const encodedParams = route.query;
 
 let params = {};
 if (encodedParams && encodedParams.p) {
@@ -179,8 +179,15 @@ for (const [key, value] of Object.entries(params)) {
     }
 }
 
-const expired =
-    baseLink.value && baseLink.value.expires ? ref(new Date(baseLink.value.expires) < Date.now()) : ref(false);
+const isExpired = (date) => {
+    const today = new Date();
+    const todayStr = today.toISOString().split("T")[0];
+    const dateStr = date.split("T")[0];
+
+    return dateStr < todayStr;
+};
+
+const expired = baseLink.value && baseLink.value.expires ? ref(isExpired(baseLink.value.expires)) : ref(false);
 
 const link = ref({
     ...baseLink.value,

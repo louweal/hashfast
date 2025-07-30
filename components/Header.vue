@@ -12,11 +12,11 @@
                 </ul>
 
                 <ul v-else class="flex gap-7 items-center text-white">
-                    <li @click="signOut" class="cursor-pointer whitespace-nowrap">Sign out</li>
-
-                    <li class="btn btn--small btn--dark" @click="isPaired ? disconnect() : connect()">
-                        {{ isPaired ? "Disconnect" : "Connect" }}
+                    <li class="cursor-pointer whitespace-nowrap">
+                        <NuxtLink to="/account">Account</NuxtLink>
                     </li>
+
+                    <li class="btn btn--small btn--dark" @click="signOut">Sign out</li>
                 </ul>
             </nav>
         </div>
@@ -24,11 +24,20 @@
 </template>
 
 <script setup>
+// import { HashConnectConnectionState } from "hashconnect";
 import { HederaService } from "~/lib/hedera";
 const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
 await fetchUser();
 
 const hederaService = new HederaService();
+const state = hederaService.state;
+
+// init HashConnect
+// onMounted(async () => {
+//     await hederaService.initHashConnect();
+// });
+
+// const isDisconnected = computed(() => state.value === HashConnectConnectionState.Disconnected);
 
 const props = defineProps({
     gradient: {
@@ -37,36 +46,27 @@ const props = defineProps({
     },
 });
 
-// watch the pairing state
-const isPaired = ref(hederaService.isPaired());
+// const connect = async () => {
+//     try {
+//         if (state.value === "Connected" || state.value === "Paired") {
+//             return;
+//         }
+//         const res = await hederaService.pairHashConnect();
+//     } catch (err) {
+//         console.error("Failed to connect:", err);
+//     }
+// };
 
-// watch the pairing state
-watch(
-    () => hederaService.state,
-    (newState) => {
-        isPaired.value = newState === "Connected" || newState === "Paired";
-    },
-);
-
-const connect = async () => {
-    try {
-        const res = await hederaService.initHashConnect();
-
-        if (res) {
-            isPaired.value = true;
-        }
-    } catch (err) {
-        console.error("Failed to connect:", err);
-    }
-};
-
-const disconnect = async () => {
-    try {
-        await hederaService.disconnectHashConnect();
-    } catch (err) {
-        console.error("Failed to disconnect:", err);
-    }
-};
+// const disconnect = async () => {
+//     try {
+//         if (state.value === "Disconnected") {
+//             return;
+//         }
+//         await hederaService.disconnectHashConnect();
+//     } catch (err) {
+//         console.error("Failed to disconnect:", err);
+//     }
+// };
 
 const signOut = async () => {
     try {

@@ -47,7 +47,9 @@ export class HederaService {
     };
 
     private hashconnect: HashConnect;
-    public state: HashConnectConnectionState = HashConnectConnectionState.Disconnected;
+
+    // public state: HashConnectConnectionState = HashConnectConnectionState.Disconnected
+    public state: Ref<HashConnectConnectionState> = ref(HashConnectConnectionState.Disconnected);
     private pairingData?: SessionData | null;
 
     constructor() {
@@ -71,7 +73,7 @@ export class HederaService {
             LedgerId.TESTNET,
             "27cf4e078673e78af436d3f8b7f33ad8",
             this.appMetadata,
-            true,
+            false,
         );
     }
 
@@ -83,16 +85,26 @@ export class HederaService {
         await this.hashconnect.init();
 
         //open pairing modal
-        if (this.state === HashConnectConnectionState.Disconnected) {
-            this.hashconnect.openPairingModal("light", "#ff0000", "#000000", "#ffffff", "1px");
-        }
-
-        // return a boolean to check if we are connected
-        return this.state;
+        this.hashconnect.openPairingModal();
     }
+
+    // async pairHashConnect() {
+    //     //open pairing modal
+    //     if (!this.pairingData) {
+    //         this.hashconnect.openPairingModal();
+    //     } else {
+    //         console.log(this.pairingData);
+    //     }
+    // }
 
     async disconnectHashConnect() {
         await this.hashconnect.disconnect();
+
+        // unpair wallet
+        this.pairingData = null;
+        this.state.value = HashConnectConnectionState.Disconnected;
+
+        console.log(this.state.value);
     }
 
     setUpHashConnectEvents() {
@@ -105,14 +117,15 @@ export class HederaService {
         });
 
         this.hashconnect.connectionStatusChangeEvent.on((connectionStatus) => {
-            this.state = connectionStatus;
+            this.state.value = connectionStatus;
+            console.log("state changed to:", this.state.value);
         });
     }
 
-    isPaired() {
-        console.log(this.state);
-        return this.state === HashConnectConnectionState.Connected || this.state === HashConnectConnectionState.Paired;
-    }
+    // isPaired() {
+    //     console.log(this.state);
+    //     return this.state === HashConnectConnectionState.Connected || this.state === HashConnectConnectionState.Paired;
+    // }
 
     parseTransactionId(transactionId: string): string {
         const [accountId, timestampPart] = transactionId.split("@");
@@ -183,6 +196,7 @@ export class HederaService {
     }
 
     async sendPayment(link: Link) {
+        console.log(link);
         if (!link.accountId) {
             throw new Error("Link does not have an accountId");
         }
@@ -195,13 +209,17 @@ export class HederaService {
 
         const memo = link.memo ? link.memo : "";
 
-        console.log(this.state);
-
-        if (this.state !== HashConnectConnectionState.Connected && this.state !== HashConnectConnectionState.Paired) {
+        if (this.state.value === HashConnectConnectionState.Disconnected) {
             await this.initHashConnect();
         }
 
+        console.log("here pairingData:");
+
+        console.log(this.pairingData);
+
         if (!this.pairingData) return;
+
+        console.log("and here");
 
         const toAccount = AccountId.fromString(link.accountId);
         const fromAccount = AccountId.fromString(this.pairingData.accountIds[0]); // assumes paired and takes first paired account id

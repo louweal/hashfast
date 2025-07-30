@@ -37,6 +37,10 @@
         background-color: var(--color-light);
     }
 
+    &--disabled {
+        opacity: 0.5;
+    }
+
     &--small {
         height: 2.5rem;
         font-size: 1rem;

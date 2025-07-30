@@ -32,6 +32,7 @@
                             <CardLink
                                 v-for="(link, index) in filteredLinks"
                                 :key="link.id"
+                                :lastLogin="user.lastLogin"
                                 v-bind="link"
                                 :handleDelete="handleDelete"
                             />
@@ -107,7 +108,10 @@ const handleDelete = async (id) => {
 };
 
 const isActiveLink = function (link) {
-    return link.expires ? new Date(link.expires) > Date.now() : true;
+    const now = new Date();
+    return link.expires
+        ? new Date(link.expires) >= new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1)
+        : true;
 };
 </script>
 
@@ -115,17 +119,17 @@ const isActiveLink = function (link) {
 .list-move,
 .list-enter-active,
 .list-leave-active {
-    transition: all 0.5s linear;
+    transition: all 0.2s linear;
 }
 
 .list-enter-from,
 .list-leave-to {
     opacity: 0;
-    height: 0;
+    /* height: 0; */
     /* transform: translateX(1px); */
 }
 
 .list-leave-active {
-    position: absolute;
+    /* position: absolute; */
 }
 </style>
