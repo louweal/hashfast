@@ -13,6 +13,13 @@
 </template>
 
 <script setup>
+const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
+await fetchUser();
+
+if (user) {
+    navigateTo("/dashboard/links");
+}
+
 useHead({
     title: "HashFast",
 });

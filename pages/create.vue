@@ -164,6 +164,7 @@ const handleFileChange = async (event) => {
     }
 
     imageFile.value = event.target.files[0];
+    console.log(imageFile.value);
 
     if (imageFile.value) {
         newLink.value.image = await imageFileToBase64(imageFile.value);
