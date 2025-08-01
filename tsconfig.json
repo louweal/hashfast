@@ -18,6 +18,6 @@
         },
         "noEmit": true
     },
-    "exclude": ["node_modules", ".nuxt"],
+    "exclude": ["node_modules", ".nuxt", "nuxt.config.ts"],
     "include": ["**/*"]
 }
