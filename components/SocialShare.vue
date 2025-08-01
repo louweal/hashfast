@@ -76,10 +76,6 @@ const props = defineProps({
         display: flex;
         gap: 0.75rem;
 
-        @media (--lg) {
-            flex-direction: column;
-        }
-
         a {
             width: 2rem;
             height: 1.5rem;

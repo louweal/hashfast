@@ -18,10 +18,6 @@ body {
         flex-direction: column;
         align-items: center;
         justify-content: center;
-
-        @media (--lg) {
-            padding: 5rem 0;
-        }
     }
 
     &__bg {
