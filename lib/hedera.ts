@@ -71,7 +71,7 @@ export class HederaService {
         //create the hashconnect instance
         this.hashconnect = new HashConnect(
             LedgerId.TESTNET,
-            "27cf4e078673e78af436d3f8b7f33ad8",
+            "b8b1efb6a5dc745fcde127bf04d22506",
             this.appMetadata,
             false,
         );
