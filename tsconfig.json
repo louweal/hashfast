@@ -9,14 +9,15 @@
         "allowJs": true,
         "resolveJsonModule": true,
         "isolatedModules": true,
-        "types": ["@types/node"],
+        "types": ["@types/node", "nuxt"],
         "strict": false,
         "baseUrl": ".",
         "paths": {
             "~/*": ["./*"],
             "@/*": ["./*"]
-        }
+        },
+        "noEmit": true
     },
-    "exclude": ["node_modules"],
-    "include": ["**/*", ".nuxt/**/*"]
+    "exclude": ["node_modules", ".nuxt"],
+    "include": ["**/*"]
 }
