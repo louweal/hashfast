@@ -39,11 +39,11 @@ export default defineNuxtConfig({
             wasm: true,
         },
     },
-    postcss: {
-        plugins: {
-            "postcss-nested": {},
-            // "@tailwindcss/postcss": {},
-            autoprefixer: {},
-        },
-    },
+    // postcss: {
+    //     plugins: {
+    //         "postcss-nested": {},
+    //         // "@tailwindcss/postcss": {},
+    //         autoprefixer: {},
+    //     },
+    // },
 });
