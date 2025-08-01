@@ -7,12 +7,6 @@ export default defineNuxtConfig({
     runtimeConfig: {
         // Private keys (only available on server-side)
         databaseUrl: process.env.DATABASE_URL,
-        hederaAccountId: process.env.HEDERA_ACCOUNT_ID,
-        hederaPrivateKey: process.env.HEDERA_PRIVATE_KEY,
-        // Public keys (exposed to client-side)
-        public: {
-            hederaNetwork: process.env.HEDERA_NETWORK || "testnet",
-        },
         jwtSecret: process.env.JWT_SECRET,
     },
     app: {
@@ -48,6 +42,8 @@ export default defineNuxtConfig({
     postcss: {
         plugins: {
             "postcss-nested": {},
+            tailwindcss: {},
+            autoprefixer: {},
         },
     },
 });
