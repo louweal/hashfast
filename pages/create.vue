@@ -135,6 +135,7 @@ watch(imageFile, (newFile) => {
 });
 
 const toggleOptionalFields = () => {
+    console.log("toggle!");
     showOptionalFields.value = !showOptionalFields.value;
 };
 

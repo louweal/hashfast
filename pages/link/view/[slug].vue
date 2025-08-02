@@ -224,7 +224,12 @@ const copyLink = async () => {
 
 const handlePayment = async () => {
     try {
-        let { transactionId, receipt } = await hederaService.sendPayment(link.value);
+        let response = await hederaService.sendPayment(link.value);
+
+        if (typeof response !== "object") {
+            throw new Error(response);
+        }
+        let { transactionId, receipt } = response;
 
         // check if payment was successful
         if (receipt.status._code == 22) {

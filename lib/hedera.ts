@@ -193,6 +193,15 @@ export class HederaService {
         return amount;
     }
 
+    async waitForPairing(): Promise<SessionData | null> {
+        return new Promise((resolve) => {
+            console.log(" waiting for pairing...");
+            this.hashconnect.pairingEvent.once((pairingData: SessionData | null) => {
+                resolve(pairingData);
+            });
+        });
+    }
+
     async sendPayment(link: Link) {
         if (!link.accountId) {
             throw new Error("Link does not have an accountId");
@@ -208,12 +217,15 @@ export class HederaService {
 
         if (this.state.value === HashConnectConnectionState.Disconnected) {
             await this.initHashConnect();
+
+            await this.waitForPairing();
         }
 
         if (!this.pairingData) return;
+        // let accountId = this.pairingData ? this.pairingData.accountIds[0] : "";
 
         const toAccount = AccountId.fromString(link.accountId);
-        const fromAccount = AccountId.fromString(this.pairingData.accountIds[0]); // assumes paired and takes first paired account id
+        const fromAccount = AccountId.fromString(this.pairingData.accountIds[0]);
         const signer = this.hashconnect.getSigner(fromAccount as any);
 
         if (link.currency == "hbar") {
