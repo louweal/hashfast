@@ -194,7 +194,7 @@ const createLink = async () => {
         if (!linkId) {
             throw new Error("Failed to create link");
         }
-        navigateTo("/link/share/" + linkId);
+        navigateTo("/link/share/" + linkId + "?new=true");
     } catch (error) {
         console.error("Failed to create link:", error);
     }

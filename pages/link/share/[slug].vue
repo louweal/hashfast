@@ -10,7 +10,7 @@
                             ><ChevronDown class="rotate-90 -ml-3" /> View Dashboard</NuxtLink
                         >
 
-                        <h1 class="font-bold text-2xl">Link created!</h1>
+                        <h1 class="font-bold text-2xl">{{ route.query.new ? "Link created!" : "Share Link" }}</h1>
 
                         <p>Now you can share the link or show the QR code for direct payment.</p>
 
@@ -49,6 +49,7 @@ const copied = ref(false);
 const route = useRoute();
 const url = useRequestURL();
 const fullUrl = url.href;
+const params = route.query;
 
 const { data: link } = await useAsyncData("link", () => $fetch(`/api/links/${route.params.slug}`));
 
