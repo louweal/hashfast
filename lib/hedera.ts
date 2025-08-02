@@ -42,7 +42,7 @@ export class HederaService {
     private appMetadata = {
         name: "HashFast",
         description: "HashFast Payments",
-        icons: ["https://www.hashfast.app/favicon.ico"],
+        icons: ["https://www.hashfast.app/app-icon.svg"],
         url: "https://www.hashfast.app",
     };
 
