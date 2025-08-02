@@ -190,7 +190,7 @@ export class HederaService {
             amount += (await this.getTransactionData(paymentIds[i], receiverId)).amount;
         }
 
-        return amount;
+        return parseFloat(amount.toFixed(2));
     }
 
     async waitForPairing(): Promise<SessionData | null> {
