@@ -23,7 +23,9 @@
                                 {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
                             </a>
 
-                            <NuxtLink :to="fullUrl + '?qr=true'" class="btn btn--small btn--dark flex gap-2"
+                            <NuxtLink
+                                :to="fullUrl.replace('share', 'view') + '?qr=true'"
+                                class="btn btn--small btn--dark flex gap-2"
                                 ><IconLink color="#fff" />
                                 Show QR
                             </NuxtLink>
