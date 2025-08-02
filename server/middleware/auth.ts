@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
         { pathPrefix: "/link/view/", method: "ANY" },
         { pathPrefix: "/api/auth", method: "ANY" },
         { pathPrefix: "/api/users", method: "ANY" },
-        { pathPrefix: "/api/payments", method: "ANY" },
+        { pathPrefix: "/api/payments", method: "POST" },
         { regex: /^\/api\/links\/[^/]+$/, method: "GET" }, // Allow GET /api/links/:id
     ];
 
