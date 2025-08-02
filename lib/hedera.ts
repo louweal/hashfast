@@ -103,8 +103,6 @@ export class HederaService {
         // unpair wallet
         this.pairingData = null;
         this.state.value = HashConnectConnectionState.Disconnected;
-
-        console.log(this.state.value);
     }
 
     setUpHashConnectEvents() {
@@ -196,7 +194,6 @@ export class HederaService {
     }
 
     async sendPayment(link: Link) {
-        console.log(link);
         if (!link.accountId) {
             throw new Error("Link does not have an accountId");
         }
@@ -213,13 +210,7 @@ export class HederaService {
             await this.initHashConnect();
         }
 
-        console.log("here pairingData:");
-
-        console.log(this.pairingData);
-
         if (!this.pairingData) return;
-
-        console.log("and here");
 
         const toAccount = AccountId.fromString(link.accountId);
         const fromAccount = AccountId.fromString(this.pairingData.accountIds[0]); // assumes paired and takes first paired account id

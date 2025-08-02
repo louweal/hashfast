@@ -91,7 +91,7 @@
                 class="block bg-white border border-body/10 rounded-2xl relative min-w-full sm:min-w-md sm:w-md"
             >
                 <div class="p-5 flex flex-col gap-4 items-start">
-                    <div class="btn" @click="goBack"><ChevronDown class="rotate-90" /> Back</div>
+                    <div class="btn" @click="goBack"><ChevronDown class="rotate-90 -ml-3" /> Back</div>
 
                     <h3 class="font-bold text-2xl">Personalized link created!</h3>
 
@@ -102,7 +102,7 @@
 
                     <div class="flex w-full">
                         <a
-                            :href="domainUrl + linkWithParams"
+                            :href="linkWithParams"
                             class="flex flex-grow gap-2 items-center cursor-pointer"
                             @click="handleCopyClick"
                         >
@@ -114,7 +114,7 @@
                         >
                     </div>
 
-                    <SocialShare :permalink="domainUrl + linkWithParams" :title="'Payment request: ' + link.name" />
+                    <SocialShare :permalink="linkWithParams" :title="'Payment request: ' + link.name" />
                 </div>
             </div>
         </div>
@@ -123,6 +123,7 @@
 
 <script setup>
 import { ref } from "vue";
+import { useRequestURL } from "nuxt/app";
 import ChevronDown from "~/components/Icon/ChevronDown.vue";
 const route = useRoute();
 const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
@@ -132,12 +133,13 @@ useHead({
     title: "Personalize link - HashFast",
 });
 
+const url = useRequestURL();
+const fullUrl = url.href;
 const username = ref(null);
 const showOptionalFields = ref(false);
 const showForm = ref(true);
 const linkWithParams = ref(null);
 const copied = ref(false);
-const domainUrl = window ? ref(window.location.origin) : null; // to do
 const newDetails = ref({});
 
 const { data: baseLink } = await useAsyncData("baseLink", () => $fetch(`/api/links/${route.params.slug}`));
@@ -182,7 +184,7 @@ const createLink = async () => {
             return;
         }
 
-        let viewPath = route.path.replace("/params/", "/view/");
+        let viewPath = fullUrl.replace("/params/", "/view/");
 
         let encodedUrlParams = btoa(JSON.stringify(newDetails.value));
 
@@ -200,7 +202,7 @@ function handleCopyClick(event) {
 
 const copyLink = async () => {
     try {
-        await navigator.clipboard.writeText(domainUrl.value + linkWithParams.value);
+        await navigator.clipboard.writeText(linkWithParams.value);
         copied.value = true;
 
         setTimeout(() => {

@@ -164,7 +164,6 @@ const handleFileChange = async (event) => {
     }
 
     imageFile.value = event.target.files[0];
-    console.log(imageFile.value);
 
     if (imageFile.value) {
         newLink.value.image = await imageFileToBase64(imageFile.value);
@@ -190,8 +189,12 @@ const createLink = async () => {
             body: bodyPayload,
         });
 
-        // go to page dashboard/links
-        navigateTo("/dashboard/links");
+        // get ID
+        const linkId = response.id;
+        if (!linkId) {
+            throw new Error("Failed to create link");
+        }
+        navigateTo("/link/share/" + linkId);
     } catch (error) {
         console.error("Failed to create link:", error);
     }

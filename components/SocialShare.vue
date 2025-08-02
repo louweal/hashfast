@@ -1,6 +1,6 @@
 <template>
     <div class="social-share">
-        <h3 class="font-semibold text-lg">Share:</h3>
+        <h3 class="font-semibold text-lg">Share on social media:</h3>
 
         <div class="social-share__links flex gap-4">
             <a target="_blank" title="Facebook" :href="`https://www.facebook.com/sharer/sharer.php?u=${permalink}`">
@@ -15,12 +15,11 @@
                 title="Twitter"
                 :href="`https://twitter.com/intent/tweet?url=${permalink}&text=${title}`"
             >
-                <!-- <svg xmlns="http://www.w3.org/2000/svg" viewbox="0 0 193 175">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640">
                     <path
-                        fill="#000"
-                        d="M151.972 0h29.306l-64.473 74.102L193 174.161h-59.449l-46.89-60.705-53.169 60.705H3.768l69.078-78.708L0 0h61.124l41.865 55.681L151.972 0Zm-10.467 156.577h16.328L52.332 16.747H34.748l106.757 139.83Z"
+                        d="M453.2 112L523.8 112L369.6 288.2L551 528L409 528L297.7 382.6L170.5 528L99.8 528L264.7 339.5L90.8 112L236.4 112L336.9 244.9L453.2 112zM428.4 485.8L467.5 485.8L215.1 152L173.1 152L428.4 485.8z"
                     />
-                </svg> -->
+                </svg>
             </a>
             <a
                 target="_blank"
@@ -45,8 +44,6 @@
 </template>
 
 <script setup>
-import { title } from "process";
-
 // get props
 const props = defineProps({
     permalink: {

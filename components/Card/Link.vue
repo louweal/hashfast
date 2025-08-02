@@ -208,8 +208,6 @@ if (props.expires) {
 
 if (props.payments.length > 0) {
     numNewPayments.value = props.payments.filter((payment) => payment.createdAt > props.lastLogin).length;
-
-    console.log(numNewPayments.value);
 }
 
 const showPanel = ref(false);
