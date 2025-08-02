@@ -257,6 +257,6 @@ watchEffect(() => {
             title = `Pay ${receiver.value.name}`;
         }
     }
-    useHead({ title });
+    useHead({ title, description: "Pay quickly on Hedera with HashFast." });
 });
 </script>
