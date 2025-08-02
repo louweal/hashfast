@@ -42,8 +42,8 @@ export class HederaService {
     private appMetadata = {
         name: "HashFast",
         description: "HashFast Payments",
-        icons: ["https://hashpress.io/wp-content/uploads/2024/10/cropped-favicon-192x192.png"],
-        url: "https://hashpress.io",
+        icons: ["https://www.hashfast.app/favicon.ico"],
+        url: "https://www.hashfast.app",
     };
 
     private hashconnect: HashConnect;
