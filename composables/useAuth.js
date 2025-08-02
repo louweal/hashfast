@@ -5,11 +5,11 @@ const loading = ref(false);
 const error = ref(null);
 
 export function useAuth() {
-    // console.trace("useAuth called");
-
     const isLoggedIn = computed(() => !!user.value);
 
     const fetchUser = async () => {
+        // return;
+
         loading.value = true;
         error.value = null;
 

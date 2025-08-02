@@ -14,9 +14,12 @@
 
 <script setup>
 const { user, loading, error, isLoggedIn, fetchUser, logout } = useAuth();
-await fetchUser();
 
-if (user) {
+// if (process.client) {
+await fetchUser();
+// }
+
+if (user.value) {
     navigateTo("/dashboard/links");
 }
 
