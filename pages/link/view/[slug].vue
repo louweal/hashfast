@@ -145,14 +145,35 @@ const isPaid = ref(false);
 const copied = ref(false);
 const paymentUrl = ref(null);
 const qrUrl = ref(route.path + "?qr=true");
-const isQrUrl = ref(route.query.qr === "true");
+console.log(route.query.qr);
+
+const isQrUrl = computed(() => route.query.qr === "true");
+
 const url = ref("");
 
 const hederaService = new HederaService();
 
+// get url params
+const encodedParams = route.query;
+
+let params = {};
+if (encodedParams && encodedParams.p) {
+    params = JSON.parse(atob(encodedParams.p));
+}
+
 const fetchBaseLink = async () => {
     try {
         baseLink.value = await $fetch(`/api/links/${route.params.slug}`);
+
+        // add url param values to baselink
+        if (Object.keys(params).length > 0) {
+            for (const [key, value] of Object.entries(params)) {
+                if (baseLink.value[key] != value) {
+                    console.log(`Updating ${key} to ${value}`);
+                    baseLink.value[key] = value;
+                }
+            }
+        }
         // Make a shallow copy to work on
         link.value = { ...baseLink.value };
 

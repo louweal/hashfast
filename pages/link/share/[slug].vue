@@ -57,7 +57,7 @@ useHead({
 const copied = ref(false);
 const route = useRoute();
 const url = useRequestURL();
-const fullUrl = url.href;
+const fullUrl = url.pathname; // get full url without query
 const viewUrl = fullUrl.replace("share", "view");
 const params = route.query;
 

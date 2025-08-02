@@ -1,3 +1,4 @@
+import { defineNuxtConfig } from "nuxt/config";
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     compatibilityDate: "2024-04-03",
@@ -39,11 +40,15 @@ export default defineNuxtConfig({
             wasm: true,
         },
     },
-    // postcss: {
-    //     plugins: {
-    //         "postcss-nested": {},
-    //         // "@tailwindcss/postcss": {},
-    //         autoprefixer: {},
-    //     },
-    // },
+    postcss: {
+        plugins: {
+            "postcss-preset-env": {
+                stage: 1,
+                features: {
+                    "nesting-rules": true,
+                },
+            }, // "@tailwindcss/postcss": {},
+            autoprefixer: {},
+        },
+    },
 });

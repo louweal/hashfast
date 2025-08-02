@@ -8,7 +8,7 @@
             >
                 <div class="card__header card__header--interactive" @click="triggerFileInput">
                     <div>
-                        <img v-if="imageFile" class="" :src="imageUrl" width="50" height="50" title="Upload icon" />
+                        <img v-if="imageUrl" class="" :src="imageUrl" width="50" height="50" title="Upload icon" />
                         <div v-else class="text-center text-lg opacity-50">
                             <p>Upload<br />icon</p>
                         </div>
@@ -144,6 +144,7 @@ watch(imageFile, (newFile) => {
 const toggleOptionalFields = () => {
     console.log("toggle!");
     showOptionalFields.value = !showOptionalFields.value;
+    console.log(showOptionalFields.value);
 };
 
 const imageFileToBase64 = (file) => {

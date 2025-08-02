@@ -61,9 +61,12 @@ const showAll = ref(true);
 const allLinks = ref([]);
 
 const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
-await fetchUser();
 
-if (user.value && user.value.id) {
+if (process.client) {
+    await fetchUser();
+}
+
+if (user.value) {
     try {
         allLinks.value = await $fetch("/api/links", {
             query: { authorId: user.value.id }, // filtered
@@ -125,11 +128,5 @@ const isActiveLink = function (link) {
 .list-enter-from,
 .list-leave-to {
     opacity: 0;
-    /* height: 0; */
-    /* transform: translateX(1px); */
-}
-
-.list-leave-active {
-    /* position: absolute; */
 }
 </style>
