@@ -24,7 +24,7 @@
             <a
                 target="_blank"
                 title="LinkedIn"
-                :href="`https://www.linkedin.com/shareArticle?mini=true&url=${permalink}&title=${title}`"
+                :href="`https://www.linkedin.com/shareArticle?url=${permalink}&title=${title}`"
             >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                     <path
