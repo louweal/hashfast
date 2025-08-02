@@ -36,12 +36,21 @@
                 </div>
             </div>
         </section>
+        <div class="bg-white shadow border-t fixed bottom-0 left-0 right-0 p-3" v-if="user">
+            <div class="opacity-60 flex gap-2 mx-auto sm:w-md justify-end items-center">
+                <NuxtLink :to="`/link/params/${link.id}`" class="flex gap-2 items-center"
+                    ><IconPersons /> Personalize link</NuxtLink
+                >
+            </div>
+        </div>
     </main>
 </template>
 
 <script setup>
 import ChevronDown from "~/components/Icon/ChevronDown.vue";
 import { useRequestURL } from "nuxt/app";
+const { user, loading, error, isLoggedIn, fetchUser } = useAuth();
+await fetchUser();
 
 useHead({
     title: "Share Link - HashFast",

@@ -19,7 +19,14 @@
 
                 <div class="p-5 flex flex-col gap-4">
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                        <input type="number" v-model="newLink.amount" placeholder="Amount" class="sm:col-span-2" />
+                        <input
+                            type="number"
+                            v-model="newLink.amount"
+                            placeholder="Amount"
+                            class="sm:col-span-2"
+                            min="0"
+                            step="any"
+                        />
                         <select v-model="newLink.currency" class="">
                             <option value="*">---</option>
                             <option value="hbar">HBAR</option>
