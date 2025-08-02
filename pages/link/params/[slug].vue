@@ -5,7 +5,7 @@
             <form
                 v-if="showForm"
                 @submit.prevent="createLink"
-                class="block bg-white border border-body/10 rounded-2xl relative min-w-full sm:min-w-md sm:w-md pt-16"
+                class="card block bg-white border border-body/10 rounded-2xl relative min-w-full sm:min-w-md sm:w-md pt-16"
             >
                 <div class="card__header">
                     <div>

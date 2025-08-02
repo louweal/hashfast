@@ -6,7 +6,7 @@
             class="container flex flex-col justify-center items-center gap-4 w-full sm:w-md"
             :class="{ 'py-40': user }"
         >
-            <div class="bg-white border border-body/10 rounded-2xl relative pt-14 w-full">
+            <div class="card bg-white border border-body/10 rounded-2xl relative pt-14 w-full">
                 <div class="card__header">
                     <img v-if="link.image" :src="link.image" width="60" height="60" />
                     <div v-else>

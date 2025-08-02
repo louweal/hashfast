@@ -72,7 +72,7 @@ const props = defineProps({
         font-size: 0.8125rem;
     }
 
-    &__links {
+    .social-share__links {
         display: flex;
         gap: 0.75rem;
 

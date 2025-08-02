@@ -12,7 +12,7 @@ body {
     /* height: 100vh; */
     padding-top: calc(var(--header-height) + 3rem);
 
-    &--center {
+    &.hero--center {
         padding: 5rem 0;
         display: flex;
         flex-direction: column;
@@ -20,7 +20,7 @@ body {
         justify-content: center;
     }
 
-    &__bg {
+    .hero__bg {
         position: absolute;
         width: 100%;
         height: 100%;
@@ -84,7 +84,7 @@ select {
 }
 
 .card {
-    &__header {
+    .card__header {
         position: absolute;
         top: -3.75rem;
         left: calc(50% - 3.75rem);
@@ -96,7 +96,7 @@ select {
         align-items: center;
         background: var(--color-secondary);
 
-        &--interactive {
+        &.card__header--interactive {
             cursor: pointer;
             transition: filter 0.3s cubic-bezier(0.2, 0, 0.2, 1);
 

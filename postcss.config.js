@@ -1,7 +1,12 @@
-export default {
+module.exports = {
     plugins: {
-        "postcss-nested": {},
-        // "@tailwindcss/postcss": {},
+        "postcss-preset-env": {
+            stage: 1,
+            features: {
+                "nesting-rules": true,
+            },
+        },
+        tailwindcss: {},
         autoprefixer: {},
     },
 };

@@ -221,7 +221,7 @@ function togglePanel() {
 
 <style scoped>
 .card-link {
-    &__circle {
+    .card-link__circle {
         position: relative;
         width: 4rem;
         height: 4rem;
@@ -232,7 +232,7 @@ function togglePanel() {
         background-color: var(--color-secondary);
         padding: 0.75rem;
 
-        &__inner {
+        .card-link__circle__inner {
             display: flex;
             justify-content: center;
             align-items: center;

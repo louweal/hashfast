@@ -81,7 +81,7 @@ const signOut = async () => {
 .header {
     height: var(--header-height);
 
-    &--gradient {
+    &.header--gradient {
         background: var(--gradient-primary);
     }
 }
