@@ -16,22 +16,20 @@
 
                         <div class="flex w-full">
                             <a
-                                :href="fullUrl"
+                                :href="viewUrl"
                                 class="flex flex-grow gap-2 items-center cursor-pointer"
                                 @click="handleCopyClick"
                             >
                                 {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
                             </a>
 
-                            <NuxtLink
-                                :to="fullUrl.replace('share', 'view') + '?qr=true'"
-                                class="btn btn--small btn--dark flex gap-2"
+                            <NuxtLink :to="viewUrl + '?qr=true'" class="btn btn--small btn--dark flex gap-2"
                                 ><IconLink color="#fff" />
                                 Show QR
                             </NuxtLink>
                         </div>
 
-                        <SocialShare :permalink="fullUrl" :title="'Payment request: ' + link.name" />
+                        <SocialShare :permalink="viewUrl" :title="'Payment request: ' + link.name" />
                     </div>
                 </div>
             </div>
@@ -60,6 +58,7 @@ const copied = ref(false);
 const route = useRoute();
 const url = useRequestURL();
 const fullUrl = url.href;
+const viewUrl = fullUrl.replace("share", "view");
 const params = route.query;
 
 const { data: link } = await useAsyncData("link", () => $fetch(`/api/links/${route.params.slug}`));
@@ -71,7 +70,7 @@ function handleCopyClick(event) {
 
 const copyLink = async () => {
     try {
-        await navigator.clipboard.writeText(fullUrl);
+        await navigator.clipboard.writeText(viewUrl);
         copied.value = true;
 
         setTimeout(() => {
