@@ -47,7 +47,7 @@ export default defineNuxtConfig({
                 features: {
                     "nesting-rules": true,
                 },
-            }, // "@tailwindcss/postcss": {},
+            },
             autoprefixer: {},
         },
     },

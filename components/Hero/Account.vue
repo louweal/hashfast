@@ -11,8 +11,6 @@
 
                     <div class="flex-col gap-4 hidden md:flex">
                         <h1 class="text-[38px] font-semibold">Welcome, {{ user.name }}</h1>
-
-                        <!-- {{ user.lastLogin }} -->
                     </div>
                 </div>
                 <div class="md:col-span-5">

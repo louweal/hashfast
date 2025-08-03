@@ -35,19 +35,22 @@
             </div>
             <div class="lg:col-span-2 flex flex-start">
                 <span
-                    v-if="getColor(maxPayments, payments.length) !== 'body'"
+                    v-if="maxPayments !== null || payments.length > 0"
                     class="relative flex items-center gap-2 rounded-sm px-3 py-1 lg:py-2 whitespace-nowrap"
                     :class="{
                         'bg-primary/20 text-primary': getColor(maxPayments, payments.length) === 'primary', // yellow
                         'bg-accent/20 text-accent': getColor(maxPayments, payments.length) === 'accent', // green
+                        'bg-body/20 text-body': getColor(maxPayments, payments.length) === 'body',
                     }"
                 >
-                    <div
-                        v-if="numNewPayments > 0"
-                        class="absolute bg-accent text-white leading-none rounded-full top-[-8px] right-[-8px] size-[16px] flex items-center justify-center text-xs"
+                    <!-- <div
+                        class="absolute bg-accent text-white leading-none rounded-full top-[-8px] right-[-8px] size-[16px] flex items-center justify-center text-xs visible transition-opacity duration-300 ease-in-out"
+                        :class="{
+                            'opacity-0 invisible': numNewPayments == 0,
+                        }"
                     >
                         {{ numNewPayments }}
-                    </div>
+                    </div> -->
                     <span class="font-bold flex gap-1">
                         <span>{{ payments.length }}</span>
                         <span v-if="maxPayments" class="font-normal">/</span>
@@ -167,8 +170,7 @@ const props = defineProps({
 
 const totalAmount = ref(0);
 const state = ref("waiting");
-// const isComplete = props.maxPayments != null && props.payments.length >= props.maxPayments ? ref(true) : ref(false);
-const numNewPayments = ref(0);
+const numNewPayments = ref(0); // to do
 
 const getColor = function (maxPayments, numPayments) {
     if (maxPayments != null && numPayments >= maxPayments) {
@@ -206,13 +208,17 @@ if (props.expires) {
     }
 }
 
-if (props.payments.length > 0) {
-    numNewPayments.value = props.payments.filter((payment) => payment.createdAt > props.lastLogin).length;
-}
+// if (props.payments.length > 0) {
+//     numNewPayments.value = props.payments.filter((payment) => payment.createdAt > props.lastLogin).length;
+// }
 
 const showPanel = ref(false);
 
 function togglePanel() {
+    if (showPanel.value == false) {
+        // opening panel
+        // numNewPayments.value = 0;
+    }
     showPanel.value = !showPanel.value;
 }
 </script>
@@ -234,7 +240,7 @@ function togglePanel() {
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 5px;
+            padding: 1rem !important;
         }
     }
 }

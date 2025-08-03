@@ -1,5 +1,5 @@
 <template>
-    <main class="">
+    <main>
         <Header :gradient="true" />
         <div class="container flex flex-col justify-center items-center gap-4 pt-40">
             <form
@@ -82,16 +82,7 @@
                 </div>
                 <div class="border-t border-t-body/15 p-5">
                     <div class="flex items-center justify-end">
-                        <div class="flex flex-grow">
-                            <!-- <ul>
-                                <li>
-                                    To: <span class="opacity-50">{{ username }}</span>
-                                </li>
-                                <li>
-                                    Wallet: <span class="opacity-50">{{ newLink.accountId }}</span>
-                                </li>
-                            </ul> -->
-                        </div>
+                        <div class="flex flex-grow"></div>
                         <button type="submit" class="btn gap-3"><span>Save</span></button>
                     </div>
                 </div>
@@ -120,7 +111,7 @@ const newLink = ref({
     authorId: user.id,
     image: null,
     amount: null,
-    currency: "hbar",
+    currency: "usdc",
     name: null,
     memo: null,
     expires: null,
@@ -142,9 +133,7 @@ watch(imageFile, (newFile) => {
 });
 
 const toggleOptionalFields = () => {
-    console.log("toggle!");
     showOptionalFields.value = !showOptionalFields.value;
-    console.log(showOptionalFields.value);
 };
 
 const imageFileToBase64 = (file) => {
