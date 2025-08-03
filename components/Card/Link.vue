@@ -94,8 +94,9 @@
 
                 <div class="flex gap-5 p-5">
                     <div class="flex flex-grow items-center gap-2">
-                        <NuxtLink :to="`/link/share/${id}`" xxxtarget="_blank" class="flex gap-1 items-center"
-                            ><IconLink />Share</NuxtLink
+                        <NuxtLink :to="`/link/share/${id}`" class="flex gap-1 items-center"><IconLink />Share</NuxtLink>
+                        <NuxtLink :to="`/link/params/${id}`" class="flex gap-1 items-center"
+                            ><IconPersons />Personalize</NuxtLink
                         >
                     </div>
                     <div class="flex">

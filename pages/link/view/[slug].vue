@@ -14,8 +14,15 @@
                     </div>
                 </div>
 
-                <div v-if="route.query.qr" class="flex justify-center border-b border-body/15">
+                <div
+                    v-if="route.query.qr"
+                    class="flex flex-col gap-0 pb-4 items-center justify-center border-b border-body/15"
+                >
                     <QrCode :value="url" @change="onUrlChange" />
+
+                    <a :href="route.path" class="flex flex-grow gap-2 items-center cursor-pointer" @click="copyLink">
+                        {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
+                    </a>
                 </div>
 
                 <div class="p-5 flex flex-col gap-4" v-if="link.id">

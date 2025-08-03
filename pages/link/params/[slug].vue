@@ -116,8 +116,8 @@
                             {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
                         </a>
 
-                        <NuxtLink :to="linkWithParams" class="btn btn--small btn--dark flex gap-2"
-                            ><IconLink color="#fff" />Visit link</NuxtLink
+                        <NuxtLink :to="linkWithParams + '&qr=true'" class="btn btn--small btn--dark flex gap-2"
+                            ><IconLink color="#fff" />Show QR</NuxtLink
                         >
                     </div>
 
