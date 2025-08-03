@@ -32,41 +32,12 @@ await fetchUser();
 const hederaService = new HederaService();
 const state = hederaService.state;
 
-// init HashConnect
-// onMounted(async () => {
-//     await hederaService.initHashConnect();
-// });
-
-// const isDisconnected = computed(() => state.value === HashConnectConnectionState.Disconnected);
-
 const props = defineProps({
     gradient: {
         type: Boolean,
         default: false,
     },
 });
-
-// const connect = async () => {
-//     try {
-//         if (state.value === "Connected" || state.value === "Paired") {
-//             return;
-//         }
-//         const res = await hederaService.pairHashConnect();
-//     } catch (err) {
-//         console.error("Failed to connect:", err);
-//     }
-// };
-
-// const disconnect = async () => {
-//     try {
-//         if (state.value === "Disconnected") {
-//             return;
-//         }
-//         await hederaService.disconnectHashConnect();
-//     } catch (err) {
-//         console.error("Failed to disconnect:", err);
-//     }
-// };
 
 const signOut = async () => {
     try {

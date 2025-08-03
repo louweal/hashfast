@@ -4,8 +4,8 @@
         <div class="container z-[2]">
             <div class="grid md:grid-cols-12 gap-y-10 gap-x-5 items-center">
                 <div class="md:col-span-4 min-height-[600px]">
-                    <div class="bg-gray-100 w-full h-[600px] rounded-4xl text-center animate-slide-up">
-                        demo video placeholder
+                    <div class="bg-[#fff9f4] w-full h-[600px] rounded-4xl text-center animate-slide-up overflow-hidden">
+                        <img src="/images/hero-screenshot.png" alt="hero" class="w-full h-full object-contain" />
                     </div>
                 </div>
                 <div class="md:col-span-5 md:col-start-6 order-first md:order-last">
