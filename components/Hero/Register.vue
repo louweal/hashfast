@@ -77,10 +77,10 @@
                                             type="text"
                                             id="wallet"
                                             class="flex-grow"
-                                            placeholder="0.0.1234567"
+                                            placeholder="Type or click 'Detect'"
                                             required
                                         />
-                                        <!-- <button class="btn btn--dark btn--square">Detect</button> -->
+                                        <button class="btn btn--dark btn--square" @click="detectWallet">Detect</button>
                                     </div>
                                 </div>
                                 <div v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</div>
@@ -105,6 +105,11 @@
 </template>
 
 <script setup>
+import { h } from "vue";
+import { HederaService } from "~/lib/hedera";
+
+const hederaService = new HederaService();
+
 const showCreateForm = ref(true);
 const showDetailsForm = ref(false);
 const creating = ref(false);
@@ -122,6 +127,21 @@ const user = ref({
 });
 
 let error = ref(null);
+
+const detectWallet = async (event) => {
+    event.preventDefault();
+    try {
+        await hederaService.initHashConnect();
+        await hederaService.waitForPairing();
+
+        if (hederaService.pairingData) {
+            // get last item in array
+            user.value.wallet = hederaService.pairingData.accountIds[hederaService.pairingData.accountIds.length - 1];
+        }
+    } catch (error) {
+        console.error("Failed to detect wallet:", error);
+    }
+};
 
 const createUser = async () => {
     creating.value = true;
@@ -142,6 +162,7 @@ const createUser = async () => {
 
             // Reset form and refresh data
             newUser.value = { email: "", password: "", password2: "" };
+            error.value = null;
             showCreateForm.value = false;
             showDetailsForm.value = true;
         } catch (error) {

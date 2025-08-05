@@ -31,10 +31,10 @@
                                             type="text"
                                             id="wallet"
                                             class="flex-grow"
-                                            placeholder="0.0.1234567"
+                                            placeholder="Type or click 'Detect'"
                                             required
                                         />
-                                        <!-- <button class="btn btn--dark btn--square">Detect</button> -->
+                                        <button class="btn btn--dark btn--square" @click="detectWallet">Detect</button>
                                     </div>
                                 </div>
                                 <div v-if="error" class="text-red-500 text-sm mt-2">{{ error }}</div>
@@ -59,6 +59,9 @@
 </template>
 
 <script setup>
+import { HederaService } from "../../lib/hedera";
+
+const hederaService = new HederaService();
 const showDetailsForm = ref(true);
 const creating = ref(false);
 
@@ -67,6 +70,21 @@ const { user, loading, error: userError, isLoggedIn, fetchUser } = useAuth();
 await fetchUser();
 
 let error = ref(null);
+
+const detectWallet = async (event) => {
+    event.preventDefault();
+    try {
+        await hederaService.initHashConnect();
+        await hederaService.waitForPairing();
+
+        if (hederaService.pairingData) {
+            // get last item in array
+            user.value.wallet = hederaService.pairingData.accountIds[hederaService.pairingData.accountIds.length - 1];
+        }
+    } catch (error) {
+        console.error("Failed to detect wallet:", error);
+    }
+};
 
 const updateUser = async () => {
     creating.value = true;
