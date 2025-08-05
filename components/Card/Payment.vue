@@ -3,7 +3,7 @@
         :href="`https://hashscan.io/${hederaService.network}/transaction/${hederaService.parseTransactionId(
             transactionId,
         )}`"
-        xxxtarget="_blank"
+        target="_blank"
         title="Inspect"
         class="grid grid-cols-12 gap-5 items-center bg-background/70 p-5 border-b border-body/15"
     >
