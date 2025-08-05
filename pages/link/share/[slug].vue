@@ -57,7 +57,7 @@ useHead({
 const copied = ref(false);
 const route = useRoute();
 const url = useRequestURL();
-const fullUrl = url.href;
+let fullUrl = url.href;
 
 // remove query params from fullUrl
 if (fullUrl.includes("?")) {
