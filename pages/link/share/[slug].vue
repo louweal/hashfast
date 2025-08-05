@@ -57,9 +57,15 @@ useHead({
 const copied = ref(false);
 const route = useRoute();
 const url = useRequestURL();
-const fullUrl = url.pathname; // get full url without query
+const fullUrl = url.href;
+
+// remove query params from fullUrl
+if (fullUrl.includes("?")) {
+    fullUrl = fullUrl.split("?")[0];
+}
+
 const viewUrl = fullUrl.replace("share", "view");
-const params = route.query;
+// const params = route.query;
 
 const { data: link } = await useAsyncData("link", () => $fetch(`/api/links/${route.params.slug}`));
 

@@ -2,10 +2,11 @@ import { Client, AccountId, Hbar, TransferTransaction, TokenId } from "@hashgrap
 import type { Link } from "@prisma/client";
 import { HashConnect, HashConnectConnectionState } from "hashconnect";
 import type { SessionData } from "hashconnect";
+import { useRuntimeConfig } from "nuxt/app";
+import { ref } from "vue";
+import type { Ref } from "vue";
 
 import { LedgerId } from "@hashgraph/sdk";
-
-type Network = "mainnet" | "testnet" | "previewnet";
 
 interface Transfer {
     account: string;
@@ -29,10 +30,6 @@ interface MirrorNodeResponse {
     transactions: TransactionRecord[];
 }
 
-type TokenMap = {
-    [key in Network]: string;
-};
-
 export class HederaService {
     private client: Client;
     private network: string;
@@ -50,7 +47,7 @@ export class HederaService {
 
     // public state: HashConnectConnectionState = HashConnectConnectionState.Disconnected
     public state: Ref<HashConnectConnectionState> = ref(HashConnectConnectionState.Disconnected);
-    private pairingData?: SessionData | null;
+    public pairingData?: SessionData | null;
 
     constructor() {
         const config = useRuntimeConfig();
@@ -88,25 +85,15 @@ export class HederaService {
         this.hashconnect.openPairingModal();
     }
 
-    // async pairHashConnect() {
-    //     //open pairing modal
-    //     if (!this.pairingData) {
-    //         this.hashconnect.openPairingModal();
-    //     } else {
-    //         console.log(this.pairingData);
-    //     }
-    // }
-
     async disconnectHashConnect() {
         await this.hashconnect.disconnect();
-
-        // unpair wallet
         this.pairingData = null;
         this.state.value = HashConnectConnectionState.Disconnected;
     }
 
     setUpHashConnectEvents() {
         this.hashconnect.pairingEvent.on((newPairing) => {
+            console.log("new pairing:", newPairing);
             this.pairingData = newPairing;
         });
 
