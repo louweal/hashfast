@@ -124,7 +124,7 @@
             </div>
         </div>
 
-        <div class="bg-white shadow border-t fixed bottom-0 left-0 right-0 p-3" v-if="user">
+        <!-- <div class="bg-white shadow border-t fixed bottom-0 left-0 right-0 p-3" v-if="user">
             <div class="opacity-60 flex gap-2 mx-auto sm:w-md items-center">
                 <p class="flex flex-grow gap-2 items-center cursor-pointer" @click="copyLink">
                     {{ copied ? "Copied!" : "Copy link" }} <IconCopy />
@@ -133,7 +133,7 @@
                     <IconPersons /> Personalize link
                 </NuxtLink>
             </div>
-        </div>
+        </div> -->
     </main>
 </template>
 

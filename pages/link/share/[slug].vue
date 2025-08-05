@@ -29,18 +29,21 @@
                             </NuxtLink>
                         </div>
 
-                        <SocialShare :permalink="viewUrl" :title="'Payment request: ' + link.name" />
+                        <SocialShare
+                            :permalink="viewUrl"
+                            :title="'Payment request from ' + user.name + ': ' + link.name"
+                        />
                     </div>
                 </div>
             </div>
         </section>
-        <div class="bg-white shadow border-t fixed bottom-0 left-0 right-0 p-3" v-if="user">
+        <!-- <div class="bg-white shadow border-t fixed bottom-0 left-0 right-0 p-3" v-if="user">
             <div class="opacity-60 flex gap-2 mx-auto sm:w-md justify-end items-center">
                 <NuxtLink :to="`/link/params/${link.id}`" class="flex gap-2 items-center"
                     ><IconPersons /> Personalize link</NuxtLink
                 >
             </div>
-        </div>
+        </div> -->
     </main>
 </template>
 
