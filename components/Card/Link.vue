@@ -88,7 +88,7 @@
                         v-for="(payment, index) in payments"
                         :key="payment.transactionId"
                         :="payment"
-                        :accountId="accountId"
+                        :accountId="toUser.wallet"
                     />
                 </div>
 
@@ -111,11 +111,16 @@
 <script setup>
 import { HederaService } from "~/lib/hedera";
 import IconTrash from "../Icon/Trash.vue";
+import { useAsyncData } from "nuxt/app";
 
 const hederaService = new HederaService();
 
 const props = defineProps({
     id: {
+        type: String,
+        required: true,
+    },
+    authorId: {
         type: String,
         required: true,
     },
@@ -146,10 +151,6 @@ const props = defineProps({
     payments: {
         type: Array,
         required: false,
-    },
-    accountId: {
-        type: String,
-        required: true,
     },
     createdAt: {
         type: String,
@@ -189,7 +190,9 @@ const getColor = function (maxPayments, numPayments) {
 // map all payment transactionIds
 let paymentIds = props.payments.map((payment) => payment.transactionId);
 
-totalAmount.value = await hederaService.getTotalTransactionAmount(paymentIds, props.accountId);
+const { data: toUser } = await useAsyncData("toUser", () => $fetch(`/api/users/${props.authorId}`));
+
+totalAmount.value = await hederaService.getTotalTransactionAmount(paymentIds, toUser.value?.wallet);
 
 if (totalAmount.value > 0) {
     state.value = "active";
