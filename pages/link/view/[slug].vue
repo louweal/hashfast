@@ -173,6 +173,10 @@ const fetchBaseLink = async () => {
         // Make a shallow copy to work on
         link.value = { ...baseLink.value };
 
+        // add accountId
+        const { data: toUser } = await useAsyncData("toUser", () => $fetch(`/api/users/${link.value.authorId}`));
+        link.value.accountId = toUser.value.wallet;
+
         // Fetch receiver after baseLink is loaded
         receiver.value = await $fetch(`/api/users/${baseLink.value.authorId}`);
     } catch (err) {
