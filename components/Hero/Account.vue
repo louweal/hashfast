@@ -45,12 +45,6 @@
                                 </div>
                             </form>
                         </div>
-                        <!-- <div v-else class="flex flex-col gap-4">
-                            <h2 class="text-[2rem] text-body">Registration successful!</h2>
-                            <p class="text-body">You can now log in with your email and password.</p>
-
-                            <NuxtLink to="/login" class="btn self-start">Login</NuxtLink>
-                        </div> -->
                     </div>
                 </div>
             </div>

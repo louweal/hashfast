@@ -74,7 +74,7 @@
                                 <input type="date" v-model="newLink.expires" placeholder="No expiration" />
                             </div>
                             <div class="flex flex-col gap-1">
-                                <h4>Number of payments</h4>
+                                <h4>Max. number of payments (optional)</h4>
                                 <input type="number" v-model="newLink.maxPayments" min="1" placeholder="Unlimited" />
                             </div>
                         </div>
@@ -116,12 +116,11 @@ const newLink = ref({
     memo: null,
     expires: null,
     maxPayments: null,
-    accountId: null,
 });
 
 if (user) {
     username.value = user.value.name;
-    newLink.value.accountId = user.value.wallet;
+    // newLink.value.accountId = user.value.wallet;
 }
 
 // Generate object URL whenever file changes

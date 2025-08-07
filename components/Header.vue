@@ -13,7 +13,7 @@
 
                 <ul v-else class="flex gap-7 items-center text-white">
                     <li class="cursor-pointer whitespace-nowrap">
-                        <NuxtLink to="/account">Account</NuxtLink>
+                        <NuxtLink to="/account">Account ({{ user.name }})</NuxtLink>
                     </li>
 
                     <li class="btn btn--small btn--dark" @click="signOut">Sign out</li>

@@ -77,16 +77,7 @@
                 </div>
                 <div class="border-t border-t-body/15 p-5">
                     <div class="flex items-center justify-end">
-                        <div class="flex flex-grow">
-                            <!-- <ul>
-                                <li>
-                                    To: <span class="opacity-50">{{ username }}</span>
-                                </li>
-                                <li>
-                                    Wallet: <span class="opacity-50">{{ link.accountId }}</span>
-                                </li>
-                            </ul> -->
-                        </div>
+                        <div class="flex flex-grow"></div>
                         <button type="submit" class="btn gap-3">
                             <span>Next</span> <ChevronDown class="-rotate-90" color="#816a37" />
                         </button>
